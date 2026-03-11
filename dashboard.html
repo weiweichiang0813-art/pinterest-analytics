@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pinterest Analytics Dashboard | Wei Wei Chiang</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #F8FAFC;
+            --bg-elevated: #FFFFFF;
+            --bg-card: #FFFFFF;
+            --bg-subtle: #F1F5F9;
+            --text: #1E3A5F;
+            --text-muted: #64748B;
+            --text-subtle: #94A3B8;
+            --accent: #0EA5E9;
+            --accent-secondary: #06B6D4;
+            --accent-dim: rgba(14, 165, 233, 0.1);
+            --accent-gradient: linear-gradient(135deg, #0EA5E9, #06B6D4);
+            --border: #E2E8F0;
+            --border-light: #F1F5F9;
+            --shadow: rgba(14, 165, 233, 0.08);
+            --shadow-lg: rgba(14, 165, 233, 0.15);
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        ::selection { background: var(--accent); color: white; }
+
+        /* Header */
+        header {
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+        }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .logo {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.4rem;
+            font-style: italic;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+        .logo-divider {
+            width: 1px;
+            height: 24px;
+            background: var(--border);
+        }
+        .page-title {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .back-link:hover {
+            background: var(--accent-dim);
+            color: var(--accent);
+        }
+        .back-link svg { width: 16px; height: 16px; }
+
+        /* Main Layout */
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .dashboard-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2.5rem;
+            font-weight: 400;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+        .dashboard-title em {
+            font-style: italic;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .dashboard-subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-elevated);
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .date-range svg { width: 16px; height: 16px; color: var(--accent); }
+        .live-dot {
+            width: 8px; height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px var(--shadow);
+            transform: translateY(-2px);
+        }
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        .stat-icon {
+            width: 44px; height: 44px;
+            background: var(--accent-dim);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .stat-icon svg {
+            width: 22px; height: 22px;
+            color: var(--accent);
+        }
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+        }
+        .stat-change.positive {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        .stat-change.negative {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        .stat-change svg { width: 12px; height: 12px; }
+        .stat-value {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2.25rem;
+            color: var(--text);
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+        .chart-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            padding: 1.5rem;
+        }
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .chart-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.25rem;
+            color: var(--text);
+        }
+        .chart-tabs {
+            display: flex;
+            gap: 0.25rem;
+            background: var(--bg-subtle);
+            padding: 0.25rem;
+            border-radius: 8px;
+        }
+        .chart-tab {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .chart-tab.active {
+            background: var(--bg-elevated);
+            color: var(--accent);
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+        .chart-container {
+            height: 280px;
+            position: relative;
+        }
+
+        /* Top Pins */
+        .top-pins-card {
+            grid-column: span 2;
+        }
+        .pins-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .pins-table th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-subtle);
+            border-bottom: 1px solid var(--border-light);
+        }
+        .pins-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 0.9rem;
+        }
+        .pins-table tr:last-child td { border-bottom: none; }
+        .pins-table tr:hover td {
+            background: var(--accent-dim);
+        }
+        .pin-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .pin-thumbnail {
+            width: 50px; height: 50px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: var(--bg-subtle);
+        }
+        .pin-title {
+            font-weight: 500;
+            color: var(--text);
+            max-width: 250px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .pin-date {
+            font-size: 0.8rem;
+            color: var(--text-subtle);
+        }
+        .metric-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+        }
+        .metric-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-subtle);
+            border-radius: 3px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+        .metric-bar-fill {
+            height: 100%;
+            background: var(--accent-gradient);
+            border-radius: 3px;
+        }
+
+        /* Keyword Search */
+        .keyword-section {
+            margin-bottom: 2rem;
+        }
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            background: var(--bg-elevated);
+            transition: all 0.2s ease;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-dim);
+        }
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-subtle);
+        }
+        .search-btn {
+            padding: 1rem 2rem;
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px var(--shadow-lg);
+        }
+        .keyword-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+        .keyword-tag {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .keyword-tag:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+        }
+        .keyword-text {
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+        .keyword-volume {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent);
+            background: var(--accent-dim);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        /* Trending Section */
+        .trending-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
+        .trending-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .trending-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px var(--shadow);
+        }
+        .trending-rank {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        .trending-keyword {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+        .trending-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .trending-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .trending-stat svg { width: 14px; height: 14px; }
+
+        /* Footer */
+        .dashboard-footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-subtle);
+            font-size: 0.85rem;
+        }
+        .dashboard-footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .charts-grid { grid-template-columns: 1fr; }
+            .trending-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .dashboard { padding: 1rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .trending-grid { grid-template-columns: 1fr; }
+            .dashboard-header { flex-direction: column; }
+            .header-content { flex-direction: column; gap: 1rem; }
+            .top-pins-card { grid-column: span 1; overflow-x: auto; }
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-icon {
+            width: 36px; height: 36px;
+            background: var(--accent-dim);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .section-icon svg { width: 18px; height: 18px; color: var(--accent); }
+        .section-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.5rem;
+            color: var(--text);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="https://weiweichiang0813-art.github.io/profolio/" class="logo">Wei Wei</a>
+                <div class="logo-divider"></div>
+                <span class="page-title">Pinterest Analytics</span>
+            </div>
+            <a href="index.html" class="back-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Home
+            </a>
+        </div>
+    </header>
+
+    <main class="dashboard">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div>
+                <h1 class="dashboard-title">Pinterest <em>Analytics</em></h1>
+                <p class="dashboard-subtitle">Track performance, discover trends, and optimize your content strategy</p>
+            </div>
+            <div class="date-range">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                Last 30 Days
+                <div class="live-dot"></div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </div>
+                    <div class="stat-change positive">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 15l-6-6-6 6"/>
+                        </svg>
+                        +24.5%
+                    </div>
+                </div>
+                <div class="stat-value" id="impressions">156.8K</div>
+                <div class="stat-label">Total Impressions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                            <polyline points="10 17 15 12 10 7"/>
+                            <line x1="15" y1="12" x2="3" y2="12"/>
+                        </svg>
+                    </div>
+                    <div class="stat-change positive">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 15l-6-6-6 6"/>
+                        </svg>
+                        +18.2%
+                    </div>
+                </div>
+                <div class="stat-value" id="pinClicks">12.4K</div>
+                <div class="stat-label">Pin Clicks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                        </svg>
+                    </div>
+                    <div class="stat-change positive">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 15l-6-6-6 6"/>
+                        </svg>
+                        +32.1%
+                    </div>
+                </div>
+                <div class="stat-value" id="saves">3.2K</div>
+                <div class="stat-label">Total Saves</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                            <polyline points="15 3 21 3 21 9"/>
+                            <line x1="10" y1="14" x2="21" y2="3"/>
+                        </svg>
+                    </div>
+                    <div class="stat-change positive">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 15l-6-6-6 6"/>
+                        </svg>
+                        +15.8%
+                    </div>
+                </div>
+                <div class="stat-value" id="outboundClicks">2.8K</div>
+                <div class="stat-label">Outbound Clicks</div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Performance Overview</h3>
+                    <div class="chart-tabs">
+                        <button class="chart-tab active" onclick="updateChart('7d')">7D</button>
+                        <button class="chart-tab" onclick="updateChart('30d')">30D</button>
+                        <button class="chart-tab" onclick="updateChart('90d')">90D</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Engagement Rate</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="engagementChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Performing Pins -->
+        <div class="chart-card top-pins-card">
+            <div class="section-header">
+                <div class="section-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                </div>
+                <h3 class="section-title">Top Performing Pins</h3>
+            </div>
+            <table class="pins-table">
+                <thead>
+                    <tr>
+                        <th>Pin</th>
+                        <th>Impressions</th>
+                        <th>Saves</th>
+                        <th>Clicks</th>
+                        <th>Engagement</th>
+                    </tr>
+                </thead>
+                <tbody id="pinsTableBody">
+                    <tr>
+                        <td>
+                            <div class="pin-info">
+                                <div class="pin-thumbnail" style="background: linear-gradient(135deg, #0EA5E9, #06B6D4);"></div>
+                                <div>
+                                    <div class="pin-title">Candle Making Tutorial - Beginner's Guide</div>
+                                    <div class="pin-date">Feb 15, 2026</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="metric-value">45.2K</div>
+                            <div class="metric-bar"><div class="metric-bar-fill" style="width: 100%;"></div></div>
+                        </td>
+                        <td>
+                            <div class="metric-value">1.2K</div>
+                            <div class="metric-bar"><div class="metric-bar-fill" style="width: 85%;"></div></div>
+                        </td>
+                        <td>
+                            <div class="metric-value">3.4K</div>
+                            <div class="metric-bar"><div class="metric-bar-fill" style="width: 75%;"></div></div>
+                        </td>
+                        <td><span class="metric-value" style="color: var(--success);">8.2%</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="pin-info">
+                                <div class="pin-thumbnail" style="background: linear-gradient(135deg, #F59E0B, #EF4444);"></div>
+                                <div>
+                                    <div class="pin-title">Home Decor Ideas for Small Spaces</div>
+                                    <div class="pin-date">Feb 12, 2026</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="metric-value">38.7K</div>
+                            <div class="metric-bar"><div class="metric-bar-fill" style="width: 86%;"></div></div>
+                        </td>
+                        <td>
+                            <div class="metric-value">980</div>
+                            <div class="metric-bar"><div class="metric-bar-fill" style="width: 70%;"></div></div>
+                        </td>
+                        <td>
+                            <div class="metric-value">2.8K</div>
+                            <div class="metric-bar"><div class="metric-bar-fill" style="width: 62%;"></div></div>
+                        </td>
+                        <td><span class="metric-value" style="color: var(--success);">7.5%</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="pin-info">
+                                <div class="pin-thumbnail" style="background: linear-gradient(135deg, #10B981, #06B6D4);"></div>
+                                <div>
+                                    <div class="pin-title">Sustainable Living Tips 2026</div>
+                                    <div class="pin-date">Feb 10, 2026</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="metric-value">32.1K</div>
+                            <div class="metric-bar"><div class="metric-bar-fill" style="width: 71%;"></div></div>
+                        </td>
+                        <td>
+                            <div class="metric-value">756</div>
+                            <div class="metric-bar"><div class="metric-bar-fill" style="width: 54%;"></div></div>
+                        </td>
+                        <td>
+                            <div class="metric-value">2.1K</div>
+                            <div class="metric-bar"><div class="metric-bar-fill" style="width: 46%;"></div></div>
+                        </td>
+                        <td><span class="metric-value" style="color: var(--success);">6.8%</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Keyword Search -->
+        <section class="keyword-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                </div>
+                <h3 class="section-title">Keyword Research</h3>
+            </div>
+            <div class="search-box">
+                <div class="search-input-wrapper">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input type="text" class="search-input" id="keywordInput" placeholder="Enter a keyword to analyze..." value="home decor">
+                </div>
+                <button class="search-btn" onclick="searchKeywords()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    Analyze
+                </button>
+            </div>
+            <div class="keyword-results" id="keywordResults">
+                <div class="keyword-tag">
+                    <span class="keyword-text">home decor ideas</span>
+                    <span class="keyword-volume">High</span>
+                </div>
+                <div class="keyword-tag">
+                    <span class="keyword-text">home decor living room</span>
+                    <span class="keyword-volume">High</span>
+                </div>
+                <div class="keyword-tag">
+                    <span class="keyword-text">home decor bedroom</span>
+                    <span class="keyword-volume">Med</span>
+                </div>
+                <div class="keyword-tag">
+                    <span class="keyword-text">home decor DIY</span>
+                    <span class="keyword-volume">Med</span>
+                </div>
+                <div class="keyword-tag">
+                    <span class="keyword-text">home decor minimalist</span>
+                    <span class="keyword-volume">Med</span>
+                </div>
+                <div class="keyword-tag">
+                    <span class="keyword-text">home decor aesthetic</span>
+                    <span class="keyword-volume">High</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trending Keywords -->
+        <section>
+            <div class="section-header">
+                <div class="section-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                        <polyline points="17 6 23 6 23 12"/>
+                    </svg>
+                </div>
+                <h3 class="section-title">Trending on Pinterest</h3>
+            </div>
+            <div class="trending-grid">
+                <div class="trending-card">
+                    <div class="trending-rank">#1</div>
+                    <div class="trending-keyword">Sustainable Fashion</div>
+                    <div class="trending-stats">
+                        <div class="trending-stat">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                            </svg>
+                            +156%
+                        </div>
+                        <div class="trending-stat">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                            </svg>
+                            2.4M pins
+                        </div>
+                    </div>
+                </div>
+                <div class="trending-card">
+                    <div class="trending-rank">#2</div>
+                    <div class="trending-keyword">Minimalist Interior</div>
+                    <div class="trending-stats">
+                        <div class="trending-stat">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                            </svg>
+                            +98%
+                        </div>
+                        <div class="trending-stat">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                            </svg>
+                            1.8M pins
+                        </div>
+                    </div>
+                </div>
+                <div class="trending-card">
+                    <div class="trending-rank">#3</div>
+                    <div class="trending-keyword">DIY Crafts</div>
+                    <div class="trending-stats">
+                        <div class="trending-stat">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                            </svg>
+                            +87%
+                        </div>
+                        <div class="trending-stat">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                            </svg>
+                            3.1M pins
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="dashboard-footer">
+        <p>Built by <a href="https://weiweichiang0813-art.github.io/profolio/">Wei Wei Chiang</a> • Data refreshes daily at 9:00 AM EST</p>
+    </footer>
+
+    <script>
+        // Performance Chart
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Impressions',
+                    data: [18500, 22400, 19800, 24500, 28900, 32100, 29800],
+                    borderColor: '#0EA5E9',
+                    backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 2,
+                    pointBackgroundColor: '#0EA5E9',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }, {
+                    label: 'Clicks',
+                    data: [1200, 1800, 1500, 2100, 2400, 2800, 2600],
+                    borderColor: '#06B6D4',
+                    backgroundColor: 'transparent',
+                    tension: 0.4,
+                    borderWidth: 2,
+                    pointBackgroundColor: '#06B6D4',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: { family: 'Manrope', size: 12 }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { family: 'JetBrains Mono', size: 11 }, color: '#94A3B8' }
+                    },
+                    y: {
+                        grid: { color: '#F1F5F9' },
+                        ticks: { font: { family: 'JetBrains Mono', size: 11 }, color: '#94A3B8' }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+
+        // Engagement Chart
+        const engCtx = document.getElementById('engagementChart').getContext('2d');
+        const engagementChart = new Chart(engCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Saves', 'Clicks', 'Outbound'],
+                datasets: [{
+                    data: [35, 42, 23],
+                    backgroundColor: ['#0EA5E9', '#06B6D4', '#10B981'],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: { family: 'Manrope', size: 12 }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Chart Tab Switching
+        function updateChart(period) {
+            document.querySelectorAll('.chart-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update data based on period
+            let labels, data1, data2;
+            if (period === '7d') {
+                labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                data1 = [18500, 22400, 19800, 24500, 28900, 32100, 29800];
+                data2 = [1200, 1800, 1500, 2100, 2400, 2800, 2600];
+            } else if (period === '30d') {
+                labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+                data1 = [85000, 102000, 118000, 156800];
+                data2 = [5200, 7800, 9100, 12400];
+            } else {
+                labels = ['Jan', 'Feb', 'Mar'];
+                data1 = [320000, 398000, 485000];
+                data2 = [18000, 28000, 38000];
+            }
+            
+            performanceChart.data.labels = labels;
+            performanceChart.data.datasets[0].data = data1;
+            performanceChart.data.datasets[1].data = data2;
+            performanceChart.update();
+        }
+
+        // Keyword Search (Demo)
+        function searchKeywords() {
+            const input = document.getElementById('keywordInput').value;
+            const results = document.getElementById('keywordResults');
+            
+            // Demo keywords based on input
+            const keywords = [
+                `${input} ideas`,
+                `${input} inspiration`,
+                `${input} aesthetic`,
+                `${input} DIY`,
+                `${input} tips`,
+                `${input} 2026`
+            ];
+            
+            results.innerHTML = keywords.map(kw => `
+                <div class="keyword-tag">
+                    <span class="keyword-text">${kw}</span>
+                    <span class="keyword-volume">${['High', 'Med', 'Low'][Math.floor(Math.random() * 3)]}</span>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
