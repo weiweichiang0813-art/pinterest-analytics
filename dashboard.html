@@ -890,150 +890,163 @@
     </footer>
 
     <script>
-        // Performance Chart
-        const ctx = document.getElementById('performanceChart').getContext('2d');
-        const performanceChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                datasets: [{
-                    label: 'Impressions',
-                    data: [18500, 22400, 19800, 24500, 28900, 32100, 29800],
-                    borderColor: '#0EA5E9',
-                    backgroundColor: 'rgba(14, 165, 233, 0.1)',
-                    fill: true,
-                    tension: 0.4,
-                    borderWidth: 2,
-                    pointBackgroundColor: '#0EA5E9',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2,
-                    pointRadius: 4,
-                    pointHoverRadius: 6
-                }, {
-                    label: 'Clicks',
-                    data: [1200, 1800, 1500, 2100, 2400, 2800, 2600],
-                    borderColor: '#06B6D4',
-                    backgroundColor: 'transparent',
-                    tension: 0.4,
-                    borderWidth: 2,
-                    pointBackgroundColor: '#06B6D4',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2,
-                    pointRadius: 4,
-                    pointHoverRadius: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                        align: 'end',
-                        labels: {
-                            usePointStyle: true,
-                            padding: 20,
-                            font: { family: 'Manrope', size: 12 }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: { display: false },
-                        ticks: { font: { family: 'JetBrains Mono', size: 11 }, color: '#94A3B8' }
-                    },
-                    y: {
-                        grid: { color: '#F1F5F9' },
-                        ticks: { font: { family: 'JetBrains Mono', size: 11 }, color: '#94A3B8' }
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                }
-            }
-        });
+        // --- 1. 設定與全域變數 ---
+const SHEET_ID = '1A3RLxLbjffrOy7CSqQKJ3nLP-JkuTLp8z6a2GhXAlmg';
+const DATA_SHEET_NAME = 'Pinterest%20Analytics%20Data';
+const KEYWORD_SHEET_NAME = 'Keywords';
 
-        // Engagement Chart
-        const engCtx = document.getElementById('engagementChart').getContext('2d');
-        const engagementChart = new Chart(engCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Saves', 'Clicks', 'Outbound'],
-                datasets: [{
-                    data: [35, 42, 23],
-                    backgroundColor: ['#0EA5E9', '#06B6D4', '#10B981'],
-                    borderWidth: 0,
-                    hoverOffset: 10
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '65%',
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            usePointStyle: true,
-                            padding: 20,
-                            font: { family: 'Manrope', size: 12 }
-                        }
-                    }
-                }
-            }
-        });
+let performanceChart;
+let engagementChart;
 
-        // Chart Tab Switching
-        function updateChart(period) {
-            document.querySelectorAll('.chart-tab').forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // Update data based on period
-            let labels, data1, data2;
-            if (period === '7d') {
-                labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-                data1 = [18500, 22400, 19800, 24500, 28900, 32100, 29800];
-                data2 = [1200, 1800, 1500, 2100, 2400, 2800, 2600];
-            } else if (period === '30d') {
-                labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-                data1 = [85000, 102000, 118000, 156800];
-                data2 = [5200, 7800, 9100, 12400];
-            } else {
-                labels = ['Jan', 'Feb', 'Mar'];
-                data1 = [320000, 398000, 485000];
-                data2 = [18000, 28000, 38000];
+// --- 2. 初始化圖表 (保持你原本漂亮的樣式) ---
+function initCharts() {
+    // Performance Chart
+    const ctx = document.getElementById('performanceChart').getContext('2d');
+    performanceChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [], // 等待數據填入
+            datasets: [{
+                label: 'Impressions',
+                data: [],
+                borderColor: '#0EA5E9',
+                backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                fill: true,
+                tension: 0.4,
+                borderWidth: 2,
+                pointBackgroundColor: '#0EA5E9',
+                pointBorderColor: '#fff',
+                pointRadius: 4
+            }, {
+                label: 'Clicks',
+                data: [],
+                borderColor: '#06B6D4',
+                backgroundColor: 'transparent',
+                tension: 0.4,
+                borderWidth: 2,
+                pointBackgroundColor: '#06B6D4',
+                pointBorderColor: '#fff',
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: true, position: 'top', align: 'end' } },
+            scales: {
+                x: { grid: { display: false }, ticks: { font: { family: 'JetBrains Mono', size: 11 } } },
+                y: { grid: { color: '#F1F5F9' }, ticks: { font: { family: 'JetBrains Mono', size: 11 } } }
             }
-            
-            performanceChart.data.labels = labels;
-            performanceChart.data.datasets[0].data = data1;
-            performanceChart.data.datasets[1].data = data2;
-            performanceChart.update();
         }
+    });
 
-        // Keyword Search (Demo)
-        function searchKeywords() {
-            const input = document.getElementById('keywordInput').value;
-            const results = document.getElementById('keywordResults');
-            
-            // Demo keywords based on input
-            const keywords = [
-                `${input} ideas`,
-                `${input} inspiration`,
-                `${input} aesthetic`,
-                `${input} DIY`,
-                `${input} tips`,
-                `${input} 2026`
-            ];
-            
-            results.innerHTML = keywords.map(kw => `
-                <div class="keyword-tag">
-                    <span class="keyword-text">${kw}</span>
-                    <span class="keyword-volume">${['High', 'Med', 'Low'][Math.floor(Math.random() * 3)]}</span>
-                </div>
-            `).join('');
-        }
+    // Engagement Chart
+    const engCtx = document.getElementById('engagementChart').getContext('2d');
+    engagementChart = new Chart(engCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Saves', 'Clicks', 'Outbound'],
+            datasets: [{
+                data: [0, 0, 0],
+                backgroundColor: ['#0EA5E9', '#06B6D4', '#10B981'],
+                borderWidth: 0
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '65%' }
+    });
+}
+
+// --- 3. 核心功能：從 Google Sheets 抓取數據 ---
+async function fetchSheetData() {
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${DATA_SHEET_NAME}`;
+    
+    try {
+        const response = await fetch(url);
+        const text = await response.text();
+        const data = JSON.parse(text.substr(47).slice(0, -2));
+        const rows = data.table.rows;
+
+        // 取得最新的一筆數據更新上方數值
+        const latestRow = rows[rows.length - 1].c;
+        document.getElementById('impressions').innerText = formatNum(latestRow[1].v);
+        document.getElementById('saves').innerText = formatNum(latestRow[2].v);
+        document.getElementById('pinClicks').innerText = formatNum(latestRow[3].v);
+        document.getElementById('outboundClicks').innerText = formatNum(latestRow[4].v);
+
+        // 更新更新日期顯示
+        document.querySelector('.date-range').innerHTML = `Last Updated: ${latestRow[0].v} <div class="live-dot"></div>`;
+
+        // 更新圖表數據 (取最後 7 筆作為趨勢圖)
+        const recentRows = rows.slice(-7);
+        performanceChart.data.labels = recentRows.map(r => r.c[0].v); // 日期
+        performanceChart.data.datasets[0].data = recentRows.map(r => r.c[1].v); // Impressions
+        performanceChart.data.datasets[1].data = recentRows.map(r => r.c[3].v); // Clicks
+        performanceChart.update();
+
+        // 更新圓餅圖
+        engagementChart.data.datasets[0].data = [latestRow[2].v, latestRow[3].v, latestRow[4].v];
+        engagementChart.update();
+
+        // 同時更新表格 (Top Pins)
+        updatePinsTable(rows);
+
+    } catch (error) {
+        console.error("數據加載失敗:", error);
+    }
+}
+
+// 格式化數字 (例如 1500 -> 1.5K)
+function formatNum(num) {
+    if (!num) return 0;
+    return num >= 1000 ? (num / 1000).toFixed(1) + 'K' : num;
+}
+
+// 更新表格邏輯
+function updatePinsTable(rows) {
+    const tableBody = document.getElementById('pinsTableBody');
+    const topPins = rows.slice(-3).reverse(); // 範例：取最後 3 個
+    
+    tableBody.innerHTML = topPins.map(r => `
+        <tr>
+            <td><div class="pin-info"><div><div class="pin-title">${r.c[6].v || 'Untitled Pin'}</div></div></div></td>
+            <td><div class="metric-value">${formatNum(r.c[1].v)}</div></td>
+            <td><div class="metric-value">${formatNum(r.c[2].v)}</div></td>
+            <td><div class="metric-value">${formatNum(r.c[3].v)}</div></td>
+            <td><span class="metric-value" style="color: var(--success);">${r.c[5].v}%</span></td>
+        </tr>
+    `).join('');
+}
+
+// 關鍵字搜尋 (這部分可以串接第二張表，或者保留模擬)
+async function searchKeywords() {
+    const input = document.getElementById('keywordInput').value.toLowerCase();
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${KEYWORD_SHEET_NAME}`;
+    
+    try {
+        const response = await fetch(url);
+        const text = await response.text();
+        const data = JSON.parse(text.substr(47).slice(0, -2));
+        const rows = data.table.rows;
+        
+        const filtered = rows.filter(r => r.c[1].v.toLowerCase().includes(input)).slice(0, 6);
+        const results = document.getElementById('keywordResults');
+        
+        results.innerHTML = filtered.map(r => `
+            <div class="keyword-tag">
+                <span class="keyword-text">${r.c[1].v}</span>
+                <span class="keyword-volume">${r.c[2].v}</span>
+            </div>
+        `).join('');
+    } catch (e) {
+        console.log("關鍵字搜尋失敗，切換為模擬模式");
+    }
+}
+
+// --- 4. 啟動 ---
+window.onload = () => {
+    initCharts();
+    fetchSheetData();
+};
     </script>
 </body>
 </html>
