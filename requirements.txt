@@ -1,0 +1,11 @@
+# Pinterest Analytics Scraper Dependencies
+
+# 網頁爬蟲
+playwright==1.40.0
+
+# Google Sheets API
+gspread==5.12.0
+google-auth==2.25.0
+
+# 其他
+python-dotenv==1.0.0
