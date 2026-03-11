@@ -1,37 +1,37 @@
 """
-Pinterest Analytics Scraper
-自動抓取 Pinterest Analytics 數據並儲存到 Google Sheets
+Pinterest Analytics Scraper v4
+進入每一則 Pin 抓取詳細統計數據
 
-功能：
-- 登入 Pinterest 帳號
-- 抓取 Analytics 數據（Impressions, Saves, Clicks 等）
-- 自動寫入 Google Sheets
-- 支援 GitHub Actions 自動執行
+流程：
+1. 開啟 Pinterest 讓用戶手動切換帳號
+2. 前往 Created tab 
+3. 逐一進入每個 Pin 的統計頁面
+4. 抓取數據並寫入 Google Sheets
 """
 
 import asyncio
 import json
 import os
 import sys
-from datetime import datetime, timedelta
+import re
+from datetime import datetime
 from playwright.async_api import async_playwright
 
 # Google Sheets
 import gspread
 from google.oauth2.service_account import Credentials
 
+if sys.platform == "win32":
+    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+
 # ============================================================
 # 設定區
 # ============================================================
 
-# Google Sheets 設定
 GOOGLE_SHEETS_ID = "1A3RLxLbjffrOy7CSqQKJ3nLP-JkuTLp8z6a2GhXAlmg"
-SHEET_NAME = "Sheet1"  # 工作表名稱
-
-# Pinterest Session 檔案
+SHEET_NAME = "Pinterest Analytics Data"
 SESSION_FILE = "pinterest_session.json"
 
-# Google API 範圍
 SCOPES = [
     'https://www.googleapis.com/auth/spreadsheets',
     'https://www.googleapis.com/auth/drive'
@@ -44,12 +44,10 @@ SCOPES = [
 
 def get_google_sheets_client():
     """連接 Google Sheets"""
-    # 優先使用環境變數（GitHub Actions）
     if os.environ.get('GOOGLE_CREDENTIALS'):
         creds_dict = json.loads(os.environ['GOOGLE_CREDENTIALS'])
         creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
     else:
-        # 本地開發使用 JSON 檔案
         creds = Credentials.from_service_account_file('credentials.json', scopes=SCOPES)
     
     client = gspread.authorize(creds)
@@ -62,15 +60,13 @@ def write_to_sheets(data: list):
         client = get_google_sheets_client()
         sheet = client.open_by_key(GOOGLE_SHEETS_ID).worksheet(SHEET_NAME)
         
-        # 取得現有數據行數
         existing_data = sheet.get_all_values()
         next_row = len(existing_data) + 1
         
-        # 寫入每筆數據
         for row in data:
             sheet.insert_row(row, next_row)
             next_row += 1
-            print(f"  ✅ 寫入: {row}")
+            print(f"  ✅ 寫入: {row[0]} - {row[6][:30] if row[6] else 'N/A'}...")
         
         print(f"\n📊 成功寫入 {len(data)} 筆數據到 Google Sheets")
         return True
@@ -80,16 +76,16 @@ def write_to_sheets(data: list):
 
 
 # ============================================================
-# Pinterest Analytics Scraper
+# Pinterest Pin Stats Scraper
 # ============================================================
 
-class PinterestAnalyticsScraper:
+class PinterestPinScraper:
     def __init__(self):
         self.playwright = None
         self.browser = None
         self.context = None
         self.page = None
-        self._captured_data = {}
+        self._captured_stats = {}
         self._all_responses = []
 
     def _setup_interceptor(self):
@@ -100,49 +96,74 @@ class PinterestAnalyticsScraper:
                 return
             
             try:
-                # 攔截 Analytics 相關 API
-                if any(keyword in url for keyword in [
-                    "AnalyticsResource",
-                    "analytics",
-                    "UserSummaryResource",
-                    "PinAnalytics",
-                    "AudienceInsights",
-                    "PerformanceResource"
-                ]):
-                    try:
-                        data = await response.json()
-                        endpoint = url.split("/resource/")[-1].split("/")[0] if "/resource/" in url else "unknown"
-                        self._captured_data[endpoint] = data
-                        self._all_responses.append({"url": url, "data": data})
-                        print(f"  ✅ 攔截: {endpoint}")
-                    except:
-                        pass
-                
-                # 攔截所有 resource API（用於 debug）
-                elif "/resource/" in url and "get" in url.lower():
+                if any(p in url for p in ["/resource/", "/_/graphql", "/v3/", "/_/api/"]):
                     try:
                         data = await response.json()
                         self._all_responses.append({"url": url, "data": data})
-                    except:
-                        pass
                         
-            except Exception as e:
+                        # 嘗試提取 Pin 統計數據
+                        self._extract_pin_stats(url, data)
+                        
+                    except:
+                        pass
+            except:
                 pass
 
         self.page.on("response", on_response)
 
-    async def init_session(self, headless=False):
+    def _extract_pin_stats(self, url, data):
+        """從 API 回應中提取 Pin 統計數據"""
+        try:
+            # GraphQL 格式
+            if "graphql" in url.lower():
+                gql_data = data.get("data", {})
+                
+                # 嘗試各種可能的 key
+                for key in gql_data:
+                    if "pin" in key.lower() or "analytics" in key.lower():
+                        inner = gql_data[key]
+                        if isinstance(inner, dict):
+                            self._parse_stats_from_dict(inner)
+            
+            # REST API 格式
+            resource_data = data.get("resource_response", {}).get("data", {})
+            if resource_data:
+                self._parse_stats_from_dict(resource_data)
+                
+        except Exception as e:
+            pass
+
+    def _parse_stats_from_dict(self, d):
+        """從字典中解析統計數據"""
+        if not isinstance(d, dict):
+            return
+        
+        # 常見的統計欄位名稱
+        stat_keys = {
+            "impressions": ["impressions", "impression", "impressionCount", "total_impressions"],
+            "saves": ["saves", "save", "saveCount", "total_saves", "repin_count"],
+            "pin_clicks": ["pin_clicks", "pinClick", "closeups", "closeup_count", "clicks"],
+            "outbound_clicks": ["outbound_clicks", "outboundClick", "link_clicks", "click_count"],
+            "engagement_rate": ["engagement_rate", "engagementRate"],
+        }
+        
+        for stat_name, possible_keys in stat_keys.items():
+            for key in possible_keys:
+                if key in d and d[key] is not None:
+                    value = d[key]
+                    if isinstance(value, (int, float)):
+                        self._captured_stats[stat_name] = value
+                        break
+
+    async def init_session(self):
         """初始化瀏覽器和 Session"""
         self.playwright = await async_playwright().start()
         
-        browser_args = ["--no-sandbox", "--disable-blink-features=AutomationControlled"]
-        
         self.browser = await self.playwright.chromium.launch(
-            headless=headless,
-            args=browser_args
+            headless=False,
+            args=["--no-sandbox", "--disable-blink-features=AutomationControlled"]
         )
 
-        # 檢查是否有現有 Session
         if os.path.exists(SESSION_FILE):
             print("📂 載入現有 Session...")
             with open(SESSION_FILE, "r") as f:
@@ -159,7 +180,6 @@ class PinterestAnalyticsScraper:
                 user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
             )
             
-            # 開啟登入頁面
             tmp_page = await self.context.new_page()
             await tmp_page.goto("https://www.pinterest.com/login/", wait_until="domcontentloaded", timeout=30000)
             
@@ -170,11 +190,10 @@ class PinterestAnalyticsScraper:
             
             input("按 Enter 繼續...")
             
-            # 儲存 Session
             storage_state = await self.context.storage_state()
             with open(SESSION_FILE, "w") as f:
                 json.dump(storage_state, f)
-            print("✅ Session 已儲存！下次不需要重新登入。")
+            print("✅ Session 已儲存！")
             await tmp_page.close()
 
         self.page = await self.context.new_page()
@@ -182,126 +201,190 @@ class PinterestAnalyticsScraper:
         print("🚀 初始化完成")
         return True
 
-    async def get_analytics_overview(self):
+    async def let_user_navigate_to_created_page(self):
         """
-        抓取 Pinterest Analytics 總覽數據
+        讓用戶手動導航到 Created 頁面
         """
-        self._captured_data.clear()
-        self._all_responses.clear()
+        print("\n" + "="*60)
+        print("📌 開啟 Pinterest...")
+        print("="*60)
         
-        print("\n📊 正在抓取 Analytics 數據...")
+        await self.page.goto("https://www.pinterest.com/", wait_until="domcontentloaded", timeout=30000)
+        await asyncio.sleep(3)
         
-        try:
-            # 前往 Analytics 頁面
-            await self.page.goto(
-                "https://analytics.pinterest.com/",
-                wait_until="domcontentloaded",
-                timeout=60000
-            )
-            await asyncio.sleep(5)
-            
-            # 等待頁面載入
-            await self.page.wait_for_load_state("networkidle", timeout=30000)
-            await asyncio.sleep(3)
-            
-            # 滾動頁面觸發更多 API
-            await self.page.evaluate("window.scrollBy(0, 500)")
-            await asyncio.sleep(2)
-            
-        except Exception as e:
-            print(f"  ⚠️ 頁面載入錯誤: {e}")
+        print("\n" + "="*60)
+        print("👆 請在瀏覽器中操作：")
+        print("="*60)
+        print("")
+        print("   1. 如果需要切換帳號，點擊右上角頭像 → 切換帳號")
+        print("   2. 點擊你的頭像進入個人頁面")
+        print("   3. 點擊 'Created' 分頁")
+        print("   4. 確認看到你發布的所有 Pins")
+        print("")
+        print("="*60)
         
-        return self._parse_analytics_data()
+        input("\n✅ 準備好後，按 Enter 開始爬蟲...")
+        
+        return True
 
-    def _parse_analytics_data(self):
-        """解析攔截到的 Analytics 數據"""
-        result = {
-            "date": datetime.now().strftime("%Y-%m-%d"),
-            "impressions": 0,
-            "saves": 0,
-            "pin_clicks": 0,
-            "outbound_clicks": 0,
-            "engagement_rate": 0.0,
-            "top_pins": []
-        }
+    async def scrape_all_pins(self, max_pins: int = 20):
+        """
+        爬取頁面上所有 Pins 的統計數據
+        """
+        all_pin_stats = []
         
-        print(f"\n📊 共攔截到 {len(self._all_responses)} 個 API 回應")
+        print(f"\n📊 開始爬取 Pins 數據（最多 {max_pins} 則）...")
         
-        for item in self._all_responses:
-            url = item["url"]
-            data = item["data"]
+        # 先滾動頁面載入更多 Pins
+        print("  📜 載入更多 Pins...")
+        try:
+            for _ in range(3):
+                await self.page.evaluate("window.scrollBy(0, 800)")
+                await asyncio.sleep(1)
             
-            # 嘗試從不同 API 回應中提取數據
+            # 回到頂部
+            await self.page.evaluate("window.scrollTo(0, 0)")
+            await asyncio.sleep(1)
+        except Exception as e:
+            print(f"  ⚠️ 滾動頁面時發生錯誤，繼續執行...")
+        
+        # 找到所有 Pin 連結
+        print("  🔍 尋找 Pin 連結...")
+        
+        # 取得頁面上所有 /pin/ 連結
+        try:
+            links = await self.page.query_selector_all('a[href*="/pin/"]')
+        except Exception as e:
+            print(f"  ⚠️ 無法取得連結: {e}")
+            return []
+        
+        pin_ids = []
+        for link in links:
             try:
-                resource_data = data.get("resource_response", {}).get("data", {})
-                
-                # 提取總覽數據
-                if isinstance(resource_data, dict):
-                    # Impressions
-                    if "impressions" in resource_data:
-                        result["impressions"] = resource_data.get("impressions", 0)
-                    if "total_impressions" in resource_data:
-                        result["impressions"] = resource_data.get("total_impressions", 0)
-                    
-                    # Saves
-                    if "saves" in resource_data:
-                        result["saves"] = resource_data.get("saves", 0)
-                    if "total_saves" in resource_data:
-                        result["saves"] = resource_data.get("total_saves", 0)
-                    
-                    # Pin Clicks
-                    if "pin_clicks" in resource_data:
-                        result["pin_clicks"] = resource_data.get("pin_clicks", 0)
-                    if "closeups" in resource_data:
-                        result["pin_clicks"] = resource_data.get("closeups", 0)
-                    
-                    # Outbound Clicks
-                    if "outbound_clicks" in resource_data:
-                        result["outbound_clicks"] = resource_data.get("outbound_clicks", 0)
-                    if "link_clicks" in resource_data:
-                        result["outbound_clicks"] = resource_data.get("link_clicks", 0)
-                    
-                    # Engagement Rate
-                    if "engagement_rate" in resource_data:
-                        result["engagement_rate"] = resource_data.get("engagement_rate", 0)
-                    
-                    # Top Pins
-                    if "pins" in resource_data and isinstance(resource_data["pins"], list):
-                        for pin in resource_data["pins"][:10]:
-                            if isinstance(pin, dict):
-                                result["top_pins"].append({
-                                    "id": pin.get("id", ""),
-                                    "title": pin.get("title", "")[:100] if pin.get("title") else "",
-                                    "impressions": pin.get("impressions", 0),
-                                    "saves": pin.get("saves", 0),
-                                    "clicks": pin.get("closeups", 0) or pin.get("pin_clicks", 0)
-                                })
-                
-            except Exception as e:
+                href = await link.get_attribute('href')
+                if href and '/pin/' in href:
+                    # 提取 Pin ID
+                    match = re.search(r'/pin/(\d+)', href)
+                    if match:
+                        pin_id = match.group(1)
+                        if pin_id not in pin_ids:
+                            pin_ids.append(pin_id)
+            except:
                 continue
         
-        # 計算 engagement rate
-        if result["impressions"] > 0 and result["engagement_rate"] == 0:
-            total_engagements = result["saves"] + result["pin_clicks"] + result["outbound_clicks"]
-            result["engagement_rate"] = round((total_engagements / result["impressions"]) * 100, 2)
+        print(f"  ✅ 找到 {len(pin_ids)} 個 Pins")
         
-        return result
+        if not pin_ids:
+            print("  ⚠️ 找不到 Pins，請確認你在 Created 頁面")
+            return []
+        
+        # 限制數量
+        pin_ids = pin_ids[:max_pins]
+        
+        # 逐一進入每個 Pin 的統計頁面
+        for i, pin_id in enumerate(pin_ids):
+            print(f"\n  [{i+1}/{len(pin_ids)}] 抓取 Pin: {pin_id}")
+            
+            self._captured_stats.clear()
+            self._all_responses.clear()
+            
+            try:
+                # 進入 Pin 統計頁面
+                stats_url = f"https://www.pinterest.com/pin/{pin_id}/analytics/"
+                await self.page.goto(stats_url, wait_until="domcontentloaded", timeout=30000)
+                await asyncio.sleep(4)
+                
+                # 滾動觸發更多 API（加入錯誤處理）
+                try:
+                    await self.page.evaluate("window.scrollBy(0, 300)")
+                    await asyncio.sleep(2)
+                except:
+                    pass
+                
+                # 嘗試從頁面提取數據
+                page_stats = await self._extract_stats_from_page()
+                
+                # 合併 API 攔截的數據和頁面提取的數據
+                stats = {**self._captured_stats, **page_stats}
+                
+                # 嘗試獲取 Pin 標題
+                title = await self._get_pin_title()
+                
+                pin_data = {
+                    "date": datetime.now().strftime("%Y-%m-%d"),
+                    "pin_id": pin_id,
+                    "pin_title": title,
+                    "impressions": stats.get("impressions", 0),
+                    "saves": stats.get("saves", 0),
+                    "pin_clicks": stats.get("pin_clicks", 0),
+                    "outbound_clicks": stats.get("outbound_clicks", 0),
+                    "engagement_rate": stats.get("engagement_rate", 0)
+                }
+                
+                all_pin_stats.append(pin_data)
+                
+                print(f"      👁️ Impressions: {pin_data['impressions']:,}")
+                print(f"      💾 Saves: {pin_data['saves']}")
+                print(f"      🖱️ Clicks: {pin_data['pin_clicks']}")
+                
+            except Exception as e:
+                print(f"      ⚠️ 錯誤: {e}")
+                continue
+        
+        return all_pin_stats
 
-    async def get_pin_stats(self, pin_id: str):
-        """取得單一 Pin 的詳細統計"""
-        self._captured_data.clear()
+    async def _extract_stats_from_page(self):
+        """從頁面元素中提取統計數據"""
+        stats = {}
         
         try:
-            await self.page.goto(
-                f"https://www.pinterest.com/pin/{pin_id}/analytics/",
-                wait_until="domcontentloaded",
-                timeout=30000
-            )
-            await asyncio.sleep(5)
-        except:
+            # 等待頁面穩定
+            await asyncio.sleep(1)
+            
+            # 取得頁面文字
+            try:
+                all_text = await self.page.inner_text('body')
+            except:
+                return stats
+            
+            # 找 "XXX Impressions" 格式
+            imp_match = re.search(r'([\d,]+)\s*[Ii]mpressions?', all_text)
+            if imp_match:
+                stats['impressions'] = int(imp_match.group(1).replace(',', ''))
+            
+            # 找 "XXX Saves" 格式
+            save_match = re.search(r'([\d,]+)\s*[Ss]aves?', all_text)
+            if save_match:
+                stats['saves'] = int(save_match.group(1).replace(',', ''))
+            
+            # 找 "XXX Clicks" 或 "XXX Pin clicks" 格式
+            click_match = re.search(r'([\d,]+)\s*(?:[Pp]in\s*)?[Cc]licks?', all_text)
+            if click_match:
+                stats['pin_clicks'] = int(click_match.group(1).replace(',', ''))
+            
+            # 找 "XXX Link clicks" 或 "XXX Outbound clicks" 格式
+            link_match = re.search(r'([\d,]+)\s*(?:[Ll]ink|[Oo]utbound)\s*[Cc]licks?', all_text)
+            if link_match:
+                stats['outbound_clicks'] = int(link_match.group(1).replace(',', ''))
+                
+        except Exception as e:
             pass
         
-        return self._captured_data
+        return stats
+
+    async def _get_pin_title(self):
+        """獲取 Pin 標題"""
+        try:
+            # 嘗試各種 selector
+            for selector in ['h1', '[data-test-id="pin-title"]', '.pinTitle']:
+                el = await self.page.query_selector(selector)
+                if el:
+                    text = await el.inner_text()
+                    if text and len(text) > 2 and 'analytics' not in text.lower():
+                        return text.strip()[:100]
+        except:
+            pass
+        return ""
 
     async def close(self):
         """關閉瀏覽器"""
@@ -317,69 +400,77 @@ class PinterestAnalyticsScraper:
 
 async def main():
     print("\n" + "="*60)
-    print("🔴 Pinterest Analytics Scraper")
+    print("🔴 Pinterest Pin Analytics Scraper v4")
     print("="*60)
     
-    scraper = PinterestAnalyticsScraper()
+    scraper = PinterestPinScraper()
     
-    # 檢查是否在 GitHub Actions 環境
-    is_ci = os.environ.get('CI') == 'true' or os.environ.get('GITHUB_ACTIONS') == 'true'
-    
-    # 初始化
-    ok = await scraper.init_session(headless=is_ci)
+    ok = await scraper.init_session()
     if not ok:
         print("❌ 初始化失敗")
         return
     
-    # 抓取 Analytics 數據
-    analytics = await scraper.get_analytics_overview()
+    # 讓用戶導航到 Created 頁面
+    await scraper.let_user_navigate_to_created_page()
     
+    # 詢問要爬取多少 Pins
+    try:
+        max_pins = int(input("\n📌 要爬取多少則 Pins？(預設 10): ").strip() or "10")
+    except:
+        max_pins = 10
+    
+    # 爬取所有 Pins
+    all_stats = await scraper.scrape_all_pins(max_pins=max_pins)
+    
+    # 顯示結果
     print("\n" + "="*60)
-    print("📊 Analytics 數據")
-    print("="*60)
-    print(f"  📅 日期: {analytics['date']}")
-    print(f"  👁️  Impressions: {analytics['impressions']:,}")
-    print(f"  💾 Saves: {analytics['saves']:,}")
-    print(f"  🖱️  Pin Clicks: {analytics['pin_clicks']:,}")
-    print(f"  🔗 Outbound Clicks: {analytics['outbound_clicks']:,}")
-    print(f"  📈 Engagement Rate: {analytics['engagement_rate']}%")
-    
-    if analytics['top_pins']:
-        print(f"\n🏆 Top Pins:")
-        for pin in analytics['top_pins'][:5]:
-            print(f"    → {pin['title'][:40]}... | Imp: {pin['impressions']:,}")
-    
-    # 寫入 Google Sheets
-    print("\n" + "="*60)
-    print("📝 寫入 Google Sheets...")
+    print(f"📊 爬取結果：共 {len(all_stats)} 則 Pins")
     print("="*60)
     
-    # 準備要寫入的數據
-    row_data = [
-        analytics['date'],
-        analytics['impressions'],
-        analytics['saves'],
-        analytics['pin_clicks'],
-        analytics['outbound_clicks'],
-        analytics['engagement_rate'],
-        "",  # pin_title (總覽不需要)
-        ""   # pin_id (總覽不需要)
-    ]
+    total_impressions = sum(p['impressions'] for p in all_stats)
+    total_saves = sum(p['saves'] for p in all_stats)
+    total_clicks = sum(p['pin_clicks'] for p in all_stats)
     
-    write_to_sheets([row_data])
+    print(f"  👁️ 總 Impressions: {total_impressions:,}")
+    print(f"  💾 總 Saves: {total_saves:,}")
+    print(f"  🖱️ 總 Clicks: {total_clicks:,}")
+    
+    if all_stats:
+        # 詢問是否寫入 Google Sheets
+        print("\n" + "="*60)
+        save_choice = input("💾 要將數據寫入 Google Sheets 嗎？(y/n): ").strip().lower()
+        
+        if save_choice == 'y':
+            print("\n📝 寫入 Google Sheets...")
+            
+            rows_to_write = []
+            for pin in all_stats:
+                row = [
+                    pin["date"],
+                    pin["impressions"],
+                    pin["saves"],
+                    pin["pin_clicks"],
+                    pin["outbound_clicks"],
+                    pin["engagement_rate"],
+                    pin["pin_title"],
+                    pin["pin_id"]
+                ]
+                rows_to_write.append(row)
+            
+            write_to_sheets(rows_to_write)
+        else:
+            print("  ⏭️ 跳過寫入 Google Sheets")
     
     # 關閉
     await scraper.close()
     
     print("\n✅ 完成！")
     
-    # 儲存 debug 資料
-    with open("debug_responses.json", "w", encoding="utf-8") as f:
-        json.dump(scraper._all_responses, f, indent=2, ensure_ascii=False, default=str)
-    print("💾 Debug 資料已儲存到 debug_responses.json")
+    # 儲存結果到本地 JSON
+    with open("pin_stats_result.json", "w", encoding="utf-8") as f:
+        json.dump(all_stats, f, indent=2, ensure_ascii=False)
+    print("💾 結果已儲存到 pin_stats_result.json")
 
 
 if __name__ == "__main__":
-    if sys.platform == "win32":
-        asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
     asyncio.run(main())
