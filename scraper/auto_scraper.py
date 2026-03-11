@@ -54,11 +54,22 @@ SCOPES = [
 
 def get_google_sheets_client():
     """連接 Google Sheets"""
-    if os.environ.get('GOOGLE_CREDENTIALS'):
-        creds_dict = json.loads(os.environ['GOOGLE_CREDENTIALS'])
-        creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
+    # 優先從 GitHub Secrets 環境變數讀取 
+    creds_json = os.environ.get('GOOGLE_CREDENTIALS')
+    
+    if creds_json:
+        try:
+            creds_dict = json.loads(creds_json)
+            creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
+            print("  ✅ 成功從環境變數載入 Google 憑證")
+        except Exception as e:
+            print(f"  ❌ 解析 GOOGLE_CREDENTIALS Secret 失敗: {e}")
+            raise
     else:
-        creds = Credentials.from_service_account_file('credentials.json', scopes=SCOPES)
+        # 本地測試路徑
+        creds_path = 'credentials.json' if os.path.exists('credentials.json') else 'scraper/credentials.json'
+        creds = Credentials.from_service_account_file(creds_path, scopes=SCOPES)
+        print(f"  ✅ 從檔案載入憑證: {creds_path}")
     
     client = gspread.authorize(creds)
     return client
