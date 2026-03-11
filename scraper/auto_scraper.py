@@ -371,17 +371,39 @@ class PinterestAutoScraper:
         return stats
 
     async def _get_pin_title(self):
-        """獲取 Pin 標題"""
+        """強化版標題抓取：確保 Dashboard 顯示正確內容"""
         try:
-            for selector in ['h1', '[data-test-id="pin-title"]']:
-                el = await self.page.query_selector(selector)
-                if el:
-                    text = await el.inner_text()
-                    if text and len(text) > 2 and 'analytics' not in text.lower():
-                        return text.strip()[:100]
+            # 優先嘗試 Pinterest 專屬的標題標籤
+            selectors = [
+                'h1[data-test-id="pin-title"]',
+                'h1', 
+                'div[data-test-id="visual-content-container"] img', # 抓取圖片的 alt 當備案
+                'meta[property="og:title"]' # 抓取元數據
+            ]
+            
+            for selector in selectors:
+                if selector.startswith('meta'):
+                    # 處理 meta tag
+                    el = await self.page.query_selector(selector)
+                    if el:
+                        text = await el.get_attribute('content')
+                else:
+                    # 處理一般 HTML 元素
+                    el = await self.page.query_selector(selector)
+                    if el:
+                        if selector.endswith('img'):
+                            text = await el.get_attribute('alt')
+                        else:
+                            text = await el.inner_text()
+                
+                if text and len(text) > 3:
+                    # 清理標題，移除結尾的 "Pinterest"
+                    clean_text = re.sub(r'\s*-\s*Pinterest$', '', text, flags=re.IGNORECASE)
+                    clean_text = clean_text.replace('Pinterest', '').strip()
+                    return clean_text[:80]
         except:
             pass
-        return ""
+        return "Untitled Terradomi Pin"
 
     async def scrape_trending_keywords(self):
         """爬取 Pinterest Trending Keywords"""
