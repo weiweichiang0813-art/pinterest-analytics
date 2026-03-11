@@ -403,7 +403,7 @@ class PinterestAutoScraper:
                     return clean_text[:80]
         except:
             pass
-        return "Untitled Terradomi Pin"
+        return "Untitled Pin"
 
     async def scrape_trending_keywords(self):
         """爬取 Pinterest Trending Keywords"""
