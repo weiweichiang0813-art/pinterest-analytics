@@ -3,277 +3,275 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pinterest Analytics Dashboard | Terradomi Candle Co.</title>
+    <title>Terradomi Pinterest Analytics | Professional Portal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg: #F8FAFC;
+            --pinterest-red: #E60023;
+            --bg: #FAFBFC;
             --bg-elevated: #FFFFFF;
-            --bg-card: #FFFFFF;
-            --bg-subtle: #F1F5F9;
-            --text: #1E3A5F;
-            --text-muted: #64748B;
-            --text-subtle: #94A3B8;
-            --accent: #0EA5E9;
-            --accent-secondary: #06B6D4;
-            --accent-dim: rgba(14, 165, 233, 0.1);
-            --accent-gradient: linear-gradient(135deg, #0EA5E9, #06B6D4);
+            --text: #111111;
+            --text-muted: #767676;
             --border: #E2E8F0;
-            --border-light: #F1F5F9;
-            --shadow: rgba(14, 165, 233, 0.08);
-            --shadow-lg: rgba(14, 165, 233, 0.15);
-            --success: #10B981;
-            --warning: #F59E0B;
-            --danger: #EF4444;
+            --accent-dim: rgba(230, 0, 35, 0.05);
+            --shadow: rgba(0, 0, 0, 0.05);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body {
-            font-family: 'Manrope', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
+        body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--text); }
 
-        /* Header */
+        /* Header matching Login Page */
         header {
             background: var(--bg-elevated);
-            border-bottom: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border);
             padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(20px);
+            position: sticky; top: 0; z-index: 100;
         }
         .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            max-width: 1400px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
         }
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+        .logo-section { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .logo-icon {
+            width: 32px; height: 32px; background: var(--pinterest-red);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
         }
-        .logo {
-            font-family: 'Instrument Serif', serif;
-            font-size: 1.4rem;
-            font-style: italic;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-decoration: none;
+        .logo-icon svg { width: 18px; height: 18px; fill: white; }
+        .logo-text { font-family: 'Instrument Serif', serif; font-size: 1.25rem; color: var(--text); }
+
+        .dashboard { max-width: 1400px; margin: 0 auto; padding: 2.5rem 2rem; }
+        
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card {
+            background: var(--bg-elevated); border-radius: 20px; padding: 1.5rem;
+            border: 1px solid var(--border); transition: all 0.3s ease;
         }
-        .logo-divider { width: 1px; height: 24px; background: var(--border); }
-        .page-title { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
-        .back-link {
-            display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); text-decoration: none; font-size: 0.85rem; padding: 0.5rem 1rem; border-radius: 8px; transition: all 0.2s ease;
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px var(--shadow); border-color: var(--pinterest-red); }
+        .stat-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 0.5rem; display: block; }
+        .stat-value { font-family: 'Instrument Serif', serif; font-size: 2.5rem; color: var(--pinterest-red); line-height: 1; }
+
+        /* Charts Section */
+        .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+        .card { background: var(--bg-elevated); border-radius: 24px; padding: 1.5rem; border: 1px solid var(--border); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .card-title { font-family: 'Instrument Serif', serif; font-size: 1.5rem; }
+        
+        /* Period Switcher */
+        .tabs { display: flex; gap: 0.5rem; background: #F0F0F0; padding: 0.25rem; border-radius: 10px; }
+        .tab { 
+            padding: 0.4rem 1rem; border: none; background: transparent; 
+            font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; 
+            cursor: pointer; border-radius: 8px; transition: 0.2s;
         }
-        .back-link:hover { background: var(--accent-dim); color: var(--accent); }
+        .tab.active { background: white; color: var(--pinterest-red); font-weight: bold; }
 
-        /* Dashboard Layout */
-        .dashboard { max-width: 1400px; margin: 0 auto; padding: 2rem; }
-        .dashboard-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
-        .dashboard-title { font-family: 'Instrument Serif', serif; font-size: 2.5rem; font-weight: 400; color: var(--text); margin-bottom: 0.5rem; }
-        .dashboard-title em { font-style: italic; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .dashboard-subtitle { color: var(--text-muted); font-size: 1rem; }
-        .date-range { display: flex; align-items: center; gap: 0.5rem; background: var(--bg-elevated); padding: 0.75rem 1.25rem; border-radius: 12px; border: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-muted); }
-        .live-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th { text-align: left; padding: 1rem; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+        td { padding: 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        .pin-title { font-weight: 600; color: #333; }
 
-        /* Stats Cards */
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
-        .stat-card { background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.5rem; transition: all 0.3s ease; }
-        .stat-value { font-family: 'Instrument Serif', serif; font-size: 2.25rem; color: var(--text); line-height: 1; margin-bottom: 0.25rem; }
-        .stat-label { font-size: 0.85rem; color: var(--text-muted); }
+        /* Keyword Search Box */
+        .search-box { position: relative; margin-top: 1rem; }
+        .search-input {
+            width: 100%; padding: 0.8rem 1rem 0.8rem 2.5rem;
+            border-radius: 100px; border: 1px solid var(--border);
+            background: #F0F2F5; font-size: 0.9rem;
+        }
+        .search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 
-        /* Charts */
-        .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.25rem; margin-bottom: 2rem; }
-        .chart-card { background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 20px; padding: 1.5rem; }
-        .chart-container { height: 280px; position: relative; }
-
-        /* Table */
-        .top-pins-card { grid-column: span 2; }
-        .pins-table { width: 100%; border-collapse: collapse; }
-        .pins-table th { text-align: left; padding: 0.75rem 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-subtle); border-bottom: 1px solid var(--border-light); }
-        .pins-table td { padding: 1rem; border-bottom: 1px solid var(--border-light); font-size: 0.9rem; }
-        .pin-title { font-weight: 500; color: var(--text); max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        /* Keyword Section */
-        .keyword-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 1rem;}
-        .keyword-tag { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; }
-        .keyword-volume { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent); background: var(--accent-dim); padding: 0.2rem 0.5rem; border-radius: 4px; }
-
-        .dashboard-footer { text-align: center; padding: 2rem; color: var(--text-subtle); font-size: 0.85rem; }
+        .keyword-results { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-top: 1.5rem; }
+        .kw-tag { 
+            background: var(--bg-elevated); border: 1px solid var(--border); 
+            padding: 0.75rem; border-radius: 12px; font-size: 0.85rem; 
+            display: flex; justify-content: space-between;
+        }
+        .kw-vol { color: var(--pinterest-red); font-weight: 700; font-family: 'JetBrains Mono'; }
     </style>
 </head>
 <body>
     <header>
         <div class="header-content">
-            <div class="logo-section">
-                <a href="https://weiweichiang0813-art.github.io/profolio/" class="logo">Wei Wei</a>
-                <div class="logo-divider"></div>
-                <span class="page-title">Terradomi Analytics</span>
-            </div>
-            <a href="index.html" class="back-link">Back to Home</a>
+            <a href="#" class="logo-section">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+                </div>
+                <span class="logo-text">Terradomi Pinterest Analytics</span>
+            </a>
+            <div style="font-family: 'JetBrains Mono'; font-size: 0.75rem; color: var(--text-muted);" id="lastSync">SYNCING...</div>
         </div>
     </header>
 
     <main class="dashboard">
-        <div class="dashboard-header">
-            <div>
-                <h1 class="dashboard-title">Pinterest <em>Analytics</em></h1>
-                <p class="dashboard-subtitle">Real-time aggregate performance for Terradomi Candle Co.</p>
-            </div>
-            <div class="date-range" id="syncStatus">
-                Loading Data...
-                <div class="live-dot"></div>
-            </div>
-        </div>
-
         <div class="stats-grid">
-            <div class="stat-card"><div class="stat-value" id="impressions">0</div><div class="stat-label">Total Impressions</div></div>
-            <div class="stat-card"><div class="stat-value" id="pinClicks">0</div><div class="stat-label">Total Pin Clicks</div></div>
-            <div class="stat-card"><div class="stat-value" id="saves">0</div><div class="stat-label">Total Saves</div></div>
-            <div class="stat-card"><div class="stat-value" id="outboundClicks">0</div><div class="stat-label">Outbound Clicks</div></div>
+            <div class="stat-card"><span class="stat-label">IMPRESSIONS</span><div class="stat-value" id="imp">0</div></div>
+            <div class="stat-card"><span class="stat-label">PIN CLICKS</span><div class="stat-value" id="clk">0</div></div>
+            <div class="stat-card"><span class="stat-label">SAVES</span><div class="stat-value" id="sav">0</div></div>
+            <div class="stat-card"><span class="stat-label">ENGAGEMENT</span><div class="stat-value" id="eng">0%</div></div>
         </div>
 
         <div class="charts-grid">
-            <div class="chart-card">
-                <div class="chart-container"><canvas id="performanceChart"></canvas></div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Performance Trend</h3>
+                    <div class="tabs">
+                        <button class="tab active" onclick="changePeriod('daily')">DAILY</button>
+                        <button class="tab" onclick="changePeriod('weekly')">WEEKLY</button>
+                        <button class="tab" onclick="changePeriod('monthly')">MONTHLY</button>
+                    </div>
+                </div>
+                <div style="height: 300px;"><canvas id="mainChart"></canvas></div>
             </div>
-            <div class="chart-card">
-                <div class="chart-container"><canvas id="engagementChart"></canvas></div>
+            <div class="card">
+                <h3 class="card-title">Keyword Research</h3>
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" id="kwInput" placeholder="Analyze home decor, candles..." onkeyup="searchKeywords()">
+                </div>
+                <div class="keyword-results" id="kwResults"></div>
             </div>
         </div>
 
-        <div class="chart-card top-pins-card">
-            <h3 style="margin-bottom: 1rem;">Recent Pin Performance</h3>
-            <table class="pins-table">
-                <thead><tr><th>Pin Title</th><th>Impressions</th><th>Saves</th><th>Clicks</th><th>Engagement</th></tr></thead>
-                <tbody id="pinsTableBody"></tbody>
-            </table>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="card">
+                <h3 class="card-title">Top Performing Pins</h3>
+                <table id="topPinsTable">
+                    <thead><tr><th>Pin Title</th><th>Impressions</th><th>Engagement</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="card">
+                <h3 class="card-title">Recent Activity Log</h3>
+                <table id="recentLogTable">
+                    <thead><tr><th>Date</th><th>Pin Title</th><th>Impressions</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
     </main>
-
-    <footer class="dashboard-footer">
-        <p>Built by Wei Wei Chiang for Terradomi Candle Co. • Data Refreshes Daily</p>
-    </footer>
 
     <script>
         const SHEET_ID = '1A3RLxLbjffrOy7CSqQKJ3nLP-JkuTLp8z6a2GhXAlmg';
         const DATA_SHEET = 'Pinterest%20Analytics%20Data';
+        const KW_SHEET = 'Keywords';
         
-        let perfChart;
+        let rawRows = [];
+        let trendChart;
 
-        async function initDashboard() {
+        async function init() {
             const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${DATA_SHEET}`;
-            
             try {
                 const response = await fetch(url);
                 const text = await response.text();
                 const data = JSON.parse(text.substr(47).slice(0, -2));
-                const rows = data.table.rows;
-
-                // --- 數據加總處理 (按日期聚合) ---
-                const dailyData = {};
-                rows.forEach(r => {
-                    const dateRaw = r.c[0].v;
-                    // 處理日期格式問題
-                    const dateKey = (typeof dateRaw === 'string') ? dateRaw : "2026 Data"; 
-                    
-                    if (!dailyData[dateKey]) {
-                        dailyData[dateKey] = { imp: 0, saves: 0, clicks: 0, outbound: 0, count: 0 };
-                    }
-                    dailyData[dateKey].imp += (r.c[1]?.v || 0);
-                    dailyData[dateKey].saves += (r.c[2]?.v || 0);
-                    dailyData[dateKey].clicks += (r.c[3]?.v || 0);
-                    dailyData[dateKey].outbound += (r.c[4]?.v || 0);
-                    dailyData[dateKey].count++;
-                });
-
-                const dateKeys = Object.keys(dailyData).sort();
-                const latestDate = dateKeys[dateKeys.length - 1];
-                const latest = dailyData[latestDate];
-
-                // 更新頂部數據
-                document.getElementById('impressions').innerText = formatNum(latest.imp);
-                document.getElementById('pinClicks').innerText = formatNum(latest.clicks);
-                document.getElementById('saves').innerText = formatNum(latest.saves);
-                document.getElementById('outboundClicks').innerText = formatNum(latest.outbound);
-                document.getElementById('syncStatus').innerHTML = `Last Updated: ${latestDate} <div class="live-dot"></div>`;
-
-                // 渲染趨勢圖
-                renderTrendChart(dateKeys, dailyData);
-                // 渲染圓餅圖
-                renderEngageChart(latest);
-                // 渲染表格 (顯示最後 5 筆原始 Pin)
-                renderTable(rows.slice(-5).reverse());
-
-            } catch (err) {
-                console.error("Dashboard Error:", err);
-            }
+                rawRows = data.table.rows;
+                
+                updateStats();
+                changePeriod('daily');
+                renderTables();
+                searchKeywords(); // Load initial trends
+                
+                document.getElementById('lastSync').innerText = `LAST SYNC: ${rawRows[rawRows.length-1].c[0].v}`;
+            } catch (e) { console.error(e); }
         }
 
-        function formatNum(n) {
-            return n >= 1000 ? (n/1000).toFixed(1) + 'K' : n;
+        function updateStats() {
+            let tImp = 0, tSav = 0, tClk = 0;
+            rawRows.forEach(r => {
+                tImp += (r.c[1]?.v || 0);
+                tSav += (r.c[2]?.v || 0);
+                tClk += (r.c[3]?.v || 0);
+            });
+            document.getElementById('imp').innerText = formatNum(tImp);
+            document.getElementById('clk').innerText = formatNum(tClk);
+            document.getElementById('sav').innerText = formatNum(tSav);
+            document.getElementById('eng').innerText = ((tClk + tSav) / tImp * 100).toFixed(1) + '%';
         }
 
-        function renderTrendChart(labels, dailyData) {
-            const ctx = document.getElementById('performanceChart').getContext('2d');
-            new Chart(ctx, {
+        function changePeriod(mode) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event?.target?.classList?.add('active');
+
+            let aggregated = {};
+            rawRows.forEach(r => {
+                let d = r.c[0].v; // 格式 YYYY-MM-DD
+                let key = d;
+                if(mode === 'monthly') key = d.substring(0, 7);
+                if(mode === 'weekly') {
+                    let date = new Date(d);
+                    key = d.substring(0, 4) + "-W" + Math.ceil(date.getDate() / 7);
+                }
+                if(!aggregated[key]) aggregated[key] = 0;
+                aggregated[key] += (r.c[1]?.v || 0);
+            });
+
+            const labels = Object.keys(aggregated).sort();
+            const values = labels.map(l => aggregated[l]);
+
+            if(trendChart) trendChart.destroy();
+            trendChart = new Chart(document.getElementById('mainChart').getContext('2d'), {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Total Impressions',
-                        data: labels.map(l => dailyData[l].imp),
-                        borderColor: '#0EA5E9',
-                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
-                        fill: true, tension: 0.4
+                        label: 'Impressions',
+                        data: values,
+                        borderColor: '#E60023',
+                        backgroundColor: 'rgba(230, 0, 35, 0.05)',
+                        fill: true, tension: 0.3, borderWidth: 3, pointRadius: 5
                     }]
                 },
                 options: { responsive: true, maintainAspectRatio: false }
             });
         }
 
-        function renderEngageChart(latest) {
-            const ctx = document.getElementById('engagementChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Saves', 'Clicks', 'Outbound'],
-                    datasets: [{
-                        data: [latest.saves, latest.clicks, latest.outbound],
-                        backgroundColor: ['#0EA5E9', '#06B6D4', '#10B981'],
-                        borderWidth: 0
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, cutout: '70%' }
-            });
-        }
-
-        function renderTable(recentRows) {
-            const body = document.getElementById('pinsTableBody');
-            body.innerHTML = recentRows.map(r => `
+        function renderTables() {
+            // Top Pins (Sorted by Impressions)
+            const sorted = [...rawRows].sort((a,b) => (b.c[1]?.v || 0) - (a.c[1]?.v || 0)).slice(0, 5);
+            document.querySelector('#topPinsTable tbody').innerHTML = sorted.map(r => `
                 <tr>
-                    <td><div class="pin-title">${r.c[6]?.v || 'Terradomi Pin'}</div></td>
+                    <td class="pin-title">${r.c[6]?.v || 'Untitled'}</td>
                     <td>${formatNum(r.c[1]?.v || 0)}</td>
-                    <td>${r.c[2]?.v || 0}</td>
-                    <td>${r.c[3]?.v || 0}</td>
-                    <td><span style="color:#10B981">${r.c[5]?.v || 0}%</span></td>
+                    <td style="color:green; font-weight:bold;">${r.c[5]?.v || 0}%</td>
+                </tr>
+            `).join('');
+
+            // Recent Log
+            const recent = [...rawRows].slice(-5).reverse();
+            document.querySelector('#recentLogTable tbody').innerHTML = recent.map(r => `
+                <tr>
+                    <td>${r.c[0].v}</td>
+                    <td>${r.c[6]?.v || 'Untitled'}</td>
+                    <td>${formatNum(r.c[1]?.v || 0)}</td>
                 </tr>
             `).join('');
         }
 
-        window.onload = initDashboard;
+        async function searchKeywords() {
+            const input = document.getElementById('kwInput').value.toLowerCase();
+            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${KW_SHEET}`;
+            try {
+                const response = await fetch(url);
+                const text = await response.text();
+                const data = JSON.parse(text.substr(47).slice(0, -2));
+                const kwRows = data.table.rows;
+                
+                const filtered = kwRows.filter(r => r.c[1].v.toLowerCase().includes(input)).slice(0, 6);
+                document.getElementById('kwResults').innerHTML = filtered.map(r => `
+                    <div class="kw-tag">
+                        <span>${r.c[1].v}</span>
+                        <span class="kw-vol">${r.c[2].v}</span>
+                    </div>
+                `).join('');
+            } catch(e) {}
+        }
+
+        function formatNum(n) { return n >= 1000 ? (n/1000).toFixed(1) + 'K' : n; }
+        
+        init();
     </script>
 </body>
 </html>
