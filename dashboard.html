@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pinterest Analytics Dashboard | Wei Wei Chiang</title>
+    <title>Pinterest Analytics Dashboard | Terradomi Candle Co.</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -39,7 +39,6 @@
             line-height: 1.6;
             min-height: 100vh;
         }
-        ::selection { background: var(--accent); color: white; }
 
         /* Header */
         header {
@@ -72,457 +71,47 @@
             -webkit-text-fill-color: transparent;
             text-decoration: none;
         }
-        .logo-divider {
-            width: 1px;
-            height: 24px;
-            background: var(--border);
-        }
-        .page-title {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
+        .logo-divider { width: 1px; height: 24px; background: var(--border); }
+        .page-title { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
         .back-link {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.85rem;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: all 0.2s ease;
+            display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); text-decoration: none; font-size: 0.85rem; padding: 0.5rem 1rem; border-radius: 8px; transition: all 0.2s ease;
         }
-        .back-link:hover {
-            background: var(--accent-dim);
-            color: var(--accent);
-        }
-        .back-link svg { width: 16px; height: 16px; }
+        .back-link:hover { background: var(--accent-dim); color: var(--accent); }
 
-        /* Main Layout */
-        .dashboard {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
+        /* Dashboard Layout */
+        .dashboard { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .dashboard-title { font-family: 'Instrument Serif', serif; font-size: 2.5rem; font-weight: 400; color: var(--text); margin-bottom: 0.5rem; }
+        .dashboard-title em { font-style: italic; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .dashboard-subtitle { color: var(--text-muted); font-size: 1rem; }
+        .date-range { display: flex; align-items: center; gap: 0.5rem; background: var(--bg-elevated); padding: 0.75rem 1.25rem; border-radius: 12px; border: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-muted); }
+        .live-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-        /* Dashboard Header */
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        .dashboard-title {
-            font-family: 'Instrument Serif', serif;
-            font-size: 2.5rem;
-            font-weight: 400;
-            color: var(--text);
-            margin-bottom: 0.5rem;
-        }
-        .dashboard-title em {
-            font-style: italic;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .dashboard-subtitle {
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
-        .date-range {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: var(--bg-elevated);
-            padding: 0.75rem 1.25rem;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-        .date-range svg { width: 16px; height: 16px; color: var(--accent); }
-        .live-dot {
-            width: 8px; height: 8px;
-            background: var(--success);
-            border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.5rem; transition: all 0.3s ease; }
+        .stat-value { font-family: 'Instrument Serif', serif; font-size: 2.25rem; color: var(--text); line-height: 1; margin-bottom: 0.25rem; }
+        .stat-label { font-size: 0.85rem; color: var(--text-muted); }
 
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1.25rem;
-            margin-bottom: 2rem;
-        }
-        .stat-card {
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-light);
-            border-radius: 16px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-        }
-        .stat-card:hover {
-            border-color: var(--accent);
-            box-shadow: 0 10px 30px var(--shadow);
-            transform: translateY(-2px);
-        }
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-        .stat-icon {
-            width: 44px; height: 44px;
-            background: var(--accent-dim);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .stat-icon svg {
-            width: 22px; height: 22px;
-            color: var(--accent);
-        }
-        .stat-change {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-        }
-        .stat-change.positive {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-        .stat-change.negative {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-        }
-        .stat-change svg { width: 12px; height: 12px; }
-        .stat-value {
-            font-family: 'Instrument Serif', serif;
-            font-size: 2.25rem;
-            color: var(--text);
-            line-height: 1;
-            margin-bottom: 0.25rem;
-        }
-        .stat-label {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
+        /* Charts */
+        .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.25rem; margin-bottom: 2rem; }
+        .chart-card { background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 20px; padding: 1.5rem; }
+        .chart-container { height: 280px; position: relative; }
 
-        /* Charts Section */
-        .charts-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 1.25rem;
-            margin-bottom: 2rem;
-        }
-        .chart-card {
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-light);
-            border-radius: 20px;
-            padding: 1.5rem;
-        }
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        .chart-title {
-            font-family: 'Instrument Serif', serif;
-            font-size: 1.25rem;
-            color: var(--text);
-        }
-        .chart-tabs {
-            display: flex;
-            gap: 0.25rem;
-            background: var(--bg-subtle);
-            padding: 0.25rem;
-            border-radius: 8px;
-        }
-        .chart-tab {
-            padding: 0.4rem 0.8rem;
-            border: none;
-            background: transparent;
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            font-family: 'JetBrains Mono', monospace;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .chart-tab.active {
-            background: var(--bg-elevated);
-            color: var(--accent);
-            box-shadow: 0 2px 8px var(--shadow);
-        }
-        .chart-container {
-            height: 280px;
-            position: relative;
-        }
+        /* Table */
+        .top-pins-card { grid-column: span 2; }
+        .pins-table { width: 100%; border-collapse: collapse; }
+        .pins-table th { text-align: left; padding: 0.75rem 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-subtle); border-bottom: 1px solid var(--border-light); }
+        .pins-table td { padding: 1rem; border-bottom: 1px solid var(--border-light); font-size: 0.9rem; }
+        .pin-title { font-weight: 500; color: var(--text); max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Top Pins */
-        .top-pins-card {
-            grid-column: span 2;
-        }
-        .pins-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .pins-table th {
-            text-align: left;
-            padding: 0.75rem 1rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-subtle);
-            border-bottom: 1px solid var(--border-light);
-        }
-        .pins-table td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-light);
-            font-size: 0.9rem;
-        }
-        .pins-table tr:last-child td { border-bottom: none; }
-        .pins-table tr:hover td {
-            background: var(--accent-dim);
-        }
-        .pin-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .pin-thumbnail {
-            width: 50px; height: 50px;
-            border-radius: 10px;
-            object-fit: cover;
-            background: var(--bg-subtle);
-        }
-        .pin-title {
-            font-weight: 500;
-            color: var(--text);
-            max-width: 250px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .pin-date {
-            font-size: 0.8rem;
-            color: var(--text-subtle);
-        }
-        .metric-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 500;
-        }
-        .metric-bar {
-            width: 100%;
-            height: 6px;
-            background: var(--bg-subtle);
-            border-radius: 3px;
-            margin-top: 0.5rem;
-            overflow: hidden;
-        }
-        .metric-bar-fill {
-            height: 100%;
-            background: var(--accent-gradient);
-            border-radius: 3px;
-        }
+        /* Keyword Section */
+        .keyword-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 1rem;}
+        .keyword-tag { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; }
+        .keyword-volume { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent); background: var(--accent-dim); padding: 0.2rem 0.5rem; border-radius: 4px; }
 
-        /* Keyword Search */
-        .keyword-section {
-            margin-bottom: 2rem;
-        }
-        .search-box {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        .search-input-wrapper {
-            flex: 1;
-            position: relative;
-        }
-        .search-input {
-            width: 100%;
-            padding: 1rem 1rem 1rem 3rem;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            font-size: 1rem;
-            font-family: inherit;
-            background: var(--bg-elevated);
-            transition: all 0.2s ease;
-        }
-        .search-input:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-dim);
-        }
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-subtle);
-        }
-        .search-btn {
-            padding: 1rem 2rem;
-            background: var(--accent-gradient);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .search-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px var(--shadow-lg);
-        }
-        .keyword-results {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 0.75rem;
-        }
-        .keyword-tag {
-            background: var(--bg-elevated);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        .keyword-tag:hover {
-            border-color: var(--accent);
-            background: var(--accent-dim);
-        }
-        .keyword-text {
-            font-size: 0.9rem;
-            color: var(--text);
-        }
-        .keyword-volume {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            color: var(--accent);
-            background: var(--accent-dim);
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-        }
-
-        /* Trending Section */
-        .trending-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.25rem;
-        }
-        .trending-card {
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-light);
-            border-radius: 16px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-        }
-        .trending-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px var(--shadow);
-        }
-        .trending-rank {
-            font-family: 'Instrument Serif', serif;
-            font-size: 2rem;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
-        }
-        .trending-keyword {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 0.5rem;
-        }
-        .trending-stats {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-        .trending-stat {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-        .trending-stat svg { width: 14px; height: 14px; }
-
-        /* Footer */
-        .dashboard-footer {
-            text-align: center;
-            padding: 2rem;
-            color: var(--text-subtle);
-            font-size: 0.85rem;
-        }
-        .dashboard-footer a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .charts-grid { grid-template-columns: 1fr; }
-            .trending-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 768px) {
-            .dashboard { padding: 1rem; }
-            .stats-grid { grid-template-columns: 1fr; }
-            .trending-grid { grid-template-columns: 1fr; }
-            .dashboard-header { flex-direction: column; }
-            .header-content { flex-direction: column; gap: 1rem; }
-            .top-pins-card { grid-column: span 1; overflow-x: auto; }
-        }
-
-        /* Section Headers */
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-        .section-icon {
-            width: 36px; height: 36px;
-            background: var(--accent-dim);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .section-icon svg { width: 18px; height: 18px; color: var(--accent); }
-        .section-title {
-            font-family: 'Instrument Serif', serif;
-            font-size: 1.5rem;
-            color: var(--text);
-        }
+        .dashboard-footer { text-align: center; padding: 2rem; color: var(--text-subtle); font-size: 0.85rem; }
     </style>
 </head>
 <body>
@@ -531,522 +120,160 @@
             <div class="logo-section">
                 <a href="https://weiweichiang0813-art.github.io/profolio/" class="logo">Wei Wei</a>
                 <div class="logo-divider"></div>
-                <span class="page-title">Pinterest Analytics</span>
+                <span class="page-title">Terradomi Analytics</span>
             </div>
-            <a href="index.html" class="back-link">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M19 12H5M12 19l-7-7 7-7"/>
-                </svg>
-                Back to Home
-            </a>
+            <a href="index.html" class="back-link">Back to Home</a>
         </div>
     </header>
 
     <main class="dashboard">
-        <!-- Dashboard Header -->
         <div class="dashboard-header">
             <div>
                 <h1 class="dashboard-title">Pinterest <em>Analytics</em></h1>
-                <p class="dashboard-subtitle">Track performance, discover trends, and optimize your content strategy</p>
+                <p class="dashboard-subtitle">Real-time aggregate performance for Terradomi Candle Co.</p>
             </div>
-            <div class="date-range">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                    <line x1="16" y1="2" x2="16" y2="6"/>
-                    <line x1="8" y1="2" x2="8" y2="6"/>
-                    <line x1="3" y1="10" x2="21" y2="10"/>
-                </svg>
-                Last 30 Days
+            <div class="date-range" id="syncStatus">
+                Loading Data...
                 <div class="live-dot"></div>
             </div>
         </div>
 
-        <!-- Stats Grid -->
         <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                            <circle cx="12" cy="12" r="3"/>
-                        </svg>
-                    </div>
-                    <div class="stat-change positive">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M18 15l-6-6-6 6"/>
-                        </svg>
-                        +24.5%
-                    </div>
-                </div>
-                <div class="stat-value" id="impressions">156.8K</div>
-                <div class="stat-label">Total Impressions</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-                            <polyline points="10 17 15 12 10 7"/>
-                            <line x1="15" y1="12" x2="3" y2="12"/>
-                        </svg>
-                    </div>
-                    <div class="stat-change positive">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M18 15l-6-6-6 6"/>
-                        </svg>
-                        +18.2%
-                    </div>
-                </div>
-                <div class="stat-value" id="pinClicks">12.4K</div>
-                <div class="stat-label">Pin Clicks</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
-                        </svg>
-                    </div>
-                    <div class="stat-change positive">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M18 15l-6-6-6 6"/>
-                        </svg>
-                        +32.1%
-                    </div>
-                </div>
-                <div class="stat-value" id="saves">3.2K</div>
-                <div class="stat-label">Total Saves</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                            <polyline points="15 3 21 3 21 9"/>
-                            <line x1="10" y1="14" x2="21" y2="3"/>
-                        </svg>
-                    </div>
-                    <div class="stat-change positive">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M18 15l-6-6-6 6"/>
-                        </svg>
-                        +15.8%
-                    </div>
-                </div>
-                <div class="stat-value" id="outboundClicks">2.8K</div>
-                <div class="stat-label">Outbound Clicks</div>
-            </div>
+            <div class="stat-card"><div class="stat-value" id="impressions">0</div><div class="stat-label">Total Impressions</div></div>
+            <div class="stat-card"><div class="stat-value" id="pinClicks">0</div><div class="stat-label">Total Pin Clicks</div></div>
+            <div class="stat-card"><div class="stat-value" id="saves">0</div><div class="stat-label">Total Saves</div></div>
+            <div class="stat-card"><div class="stat-value" id="outboundClicks">0</div><div class="stat-label">Outbound Clicks</div></div>
         </div>
 
-        <!-- Charts -->
         <div class="charts-grid">
             <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">Performance Overview</h3>
-                    <div class="chart-tabs">
-                        <button class="chart-tab active" onclick="updateChart('7d')">7D</button>
-                        <button class="chart-tab" onclick="updateChart('30d')">30D</button>
-                        <button class="chart-tab" onclick="updateChart('90d')">90D</button>
-                    </div>
-                </div>
-                <div class="chart-container">
-                    <canvas id="performanceChart"></canvas>
-                </div>
+                <div class="chart-container"><canvas id="performanceChart"></canvas></div>
             </div>
             <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">Engagement Rate</h3>
-                </div>
-                <div class="chart-container">
-                    <canvas id="engagementChart"></canvas>
-                </div>
+                <div class="chart-container"><canvas id="engagementChart"></canvas></div>
             </div>
         </div>
 
-        <!-- Top Performing Pins -->
         <div class="chart-card top-pins-card">
-            <div class="section-header">
-                <div class="section-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                    </svg>
-                </div>
-                <h3 class="section-title">Top Performing Pins</h3>
-            </div>
+            <h3 style="margin-bottom: 1rem;">Recent Pin Performance</h3>
             <table class="pins-table">
-                <thead>
-                    <tr>
-                        <th>Pin</th>
-                        <th>Impressions</th>
-                        <th>Saves</th>
-                        <th>Clicks</th>
-                        <th>Engagement</th>
-                    </tr>
-                </thead>
-                <tbody id="pinsTableBody">
-                    <tr>
-                        <td>
-                            <div class="pin-info">
-                                <div class="pin-thumbnail" style="background: linear-gradient(135deg, #0EA5E9, #06B6D4);"></div>
-                                <div>
-                                    <div class="pin-title">Candle Making Tutorial - Beginner's Guide</div>
-                                    <div class="pin-date">Feb 15, 2026</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="metric-value">45.2K</div>
-                            <div class="metric-bar"><div class="metric-bar-fill" style="width: 100%;"></div></div>
-                        </td>
-                        <td>
-                            <div class="metric-value">1.2K</div>
-                            <div class="metric-bar"><div class="metric-bar-fill" style="width: 85%;"></div></div>
-                        </td>
-                        <td>
-                            <div class="metric-value">3.4K</div>
-                            <div class="metric-bar"><div class="metric-bar-fill" style="width: 75%;"></div></div>
-                        </td>
-                        <td><span class="metric-value" style="color: var(--success);">8.2%</span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="pin-info">
-                                <div class="pin-thumbnail" style="background: linear-gradient(135deg, #F59E0B, #EF4444);"></div>
-                                <div>
-                                    <div class="pin-title">Home Decor Ideas for Small Spaces</div>
-                                    <div class="pin-date">Feb 12, 2026</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="metric-value">38.7K</div>
-                            <div class="metric-bar"><div class="metric-bar-fill" style="width: 86%;"></div></div>
-                        </td>
-                        <td>
-                            <div class="metric-value">980</div>
-                            <div class="metric-bar"><div class="metric-bar-fill" style="width: 70%;"></div></div>
-                        </td>
-                        <td>
-                            <div class="metric-value">2.8K</div>
-                            <div class="metric-bar"><div class="metric-bar-fill" style="width: 62%;"></div></div>
-                        </td>
-                        <td><span class="metric-value" style="color: var(--success);">7.5%</span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="pin-info">
-                                <div class="pin-thumbnail" style="background: linear-gradient(135deg, #10B981, #06B6D4);"></div>
-                                <div>
-                                    <div class="pin-title">Sustainable Living Tips 2026</div>
-                                    <div class="pin-date">Feb 10, 2026</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="metric-value">32.1K</div>
-                            <div class="metric-bar"><div class="metric-bar-fill" style="width: 71%;"></div></div>
-                        </td>
-                        <td>
-                            <div class="metric-value">756</div>
-                            <div class="metric-bar"><div class="metric-bar-fill" style="width: 54%;"></div></div>
-                        </td>
-                        <td>
-                            <div class="metric-value">2.1K</div>
-                            <div class="metric-bar"><div class="metric-bar-fill" style="width: 46%;"></div></div>
-                        </td>
-                        <td><span class="metric-value" style="color: var(--success);">6.8%</span></td>
-                    </tr>
-                </tbody>
+                <thead><tr><th>Pin Title</th><th>Impressions</th><th>Saves</th><th>Clicks</th><th>Engagement</th></tr></thead>
+                <tbody id="pinsTableBody"></tbody>
             </table>
         </div>
-
-        <!-- Keyword Search -->
-        <section class="keyword-section">
-            <div class="section-header">
-                <div class="section-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"/>
-                        <path d="m21 21-4.35-4.35"/>
-                    </svg>
-                </div>
-                <h3 class="section-title">Keyword Research</h3>
-            </div>
-            <div class="search-box">
-                <div class="search-input-wrapper">
-                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"/>
-                        <path d="m21 21-4.35-4.35"/>
-                    </svg>
-                    <input type="text" class="search-input" id="keywordInput" placeholder="Enter a keyword to analyze..." value="home decor">
-                </div>
-                <button class="search-btn" onclick="searchKeywords()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-                        <circle cx="11" cy="11" r="8"/>
-                        <path d="m21 21-4.35-4.35"/>
-                    </svg>
-                    Analyze
-                </button>
-            </div>
-            <div class="keyword-results" id="keywordResults">
-                <div class="keyword-tag">
-                    <span class="keyword-text">home decor ideas</span>
-                    <span class="keyword-volume">High</span>
-                </div>
-                <div class="keyword-tag">
-                    <span class="keyword-text">home decor living room</span>
-                    <span class="keyword-volume">High</span>
-                </div>
-                <div class="keyword-tag">
-                    <span class="keyword-text">home decor bedroom</span>
-                    <span class="keyword-volume">Med</span>
-                </div>
-                <div class="keyword-tag">
-                    <span class="keyword-text">home decor DIY</span>
-                    <span class="keyword-volume">Med</span>
-                </div>
-                <div class="keyword-tag">
-                    <span class="keyword-text">home decor minimalist</span>
-                    <span class="keyword-volume">Med</span>
-                </div>
-                <div class="keyword-tag">
-                    <span class="keyword-text">home decor aesthetic</span>
-                    <span class="keyword-volume">High</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- Trending Keywords -->
-        <section>
-            <div class="section-header">
-                <div class="section-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                        <polyline points="17 6 23 6 23 12"/>
-                    </svg>
-                </div>
-                <h3 class="section-title">Trending on Pinterest</h3>
-            </div>
-            <div class="trending-grid">
-                <div class="trending-card">
-                    <div class="trending-rank">#1</div>
-                    <div class="trending-keyword">Sustainable Fashion</div>
-                    <div class="trending-stats">
-                        <div class="trending-stat">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                            </svg>
-                            +156%
-                        </div>
-                        <div class="trending-stat">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="11" cy="11" r="8"/>
-                            </svg>
-                            2.4M pins
-                        </div>
-                    </div>
-                </div>
-                <div class="trending-card">
-                    <div class="trending-rank">#2</div>
-                    <div class="trending-keyword">Minimalist Interior</div>
-                    <div class="trending-stats">
-                        <div class="trending-stat">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                            </svg>
-                            +98%
-                        </div>
-                        <div class="trending-stat">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="11" cy="11" r="8"/>
-                            </svg>
-                            1.8M pins
-                        </div>
-                    </div>
-                </div>
-                <div class="trending-card">
-                    <div class="trending-rank">#3</div>
-                    <div class="trending-keyword">DIY Crafts</div>
-                    <div class="trending-stats">
-                        <div class="trending-stat">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                            </svg>
-                            +87%
-                        </div>
-                        <div class="trending-stat">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="11" cy="11" r="8"/>
-                            </svg>
-                            3.1M pins
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
 
     <footer class="dashboard-footer">
-        <p>Built by <a href="https://weiweichiang0813-art.github.io/profolio/">Wei Wei Chiang</a> • Data refreshes daily at 9:00 AM EST</p>
+        <p>Built by Wei Wei Chiang for Terradomi Candle Co. • Data Refreshes Daily</p>
     </footer>
 
     <script>
-        // --- 1. 設定與全域變數 ---
-const SHEET_ID = '1A3RLxLbjffrOy7CSqQKJ3nLP-JkuTLp8z6a2GhXAlmg';
-const DATA_SHEET_NAME = 'Pinterest%20Analytics%20Data';
-const KEYWORD_SHEET_NAME = 'Keywords';
+        const SHEET_ID = '1A3RLxLbjffrOy7CSqQKJ3nLP-JkuTLp8z6a2GhXAlmg';
+        const DATA_SHEET = 'Pinterest%20Analytics%20Data';
+        
+        let perfChart;
 
-let performanceChart;
-let engagementChart;
+        async function initDashboard() {
+            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${DATA_SHEET}`;
+            
+            try {
+                const response = await fetch(url);
+                const text = await response.text();
+                const data = JSON.parse(text.substr(47).slice(0, -2));
+                const rows = data.table.rows;
 
-// --- 2. 初始化圖表 (保持你原本漂亮的樣式) ---
-function initCharts() {
-    // Performance Chart
-    const ctx = document.getElementById('performanceChart').getContext('2d');
-    performanceChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [], // 等待數據填入
-            datasets: [{
-                label: 'Impressions',
-                data: [],
-                borderColor: '#0EA5E9',
-                backgroundColor: 'rgba(14, 165, 233, 0.1)',
-                fill: true,
-                tension: 0.4,
-                borderWidth: 2,
-                pointBackgroundColor: '#0EA5E9',
-                pointBorderColor: '#fff',
-                pointRadius: 4
-            }, {
-                label: 'Clicks',
-                data: [],
-                borderColor: '#06B6D4',
-                backgroundColor: 'transparent',
-                tension: 0.4,
-                borderWidth: 2,
-                pointBackgroundColor: '#06B6D4',
-                pointBorderColor: '#fff',
-                pointRadius: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: true, position: 'top', align: 'end' } },
-            scales: {
-                x: { grid: { display: false }, ticks: { font: { family: 'JetBrains Mono', size: 11 } } },
-                y: { grid: { color: '#F1F5F9' }, ticks: { font: { family: 'JetBrains Mono', size: 11 } } }
+                // --- 數據加總處理 (按日期聚合) ---
+                const dailyData = {};
+                rows.forEach(r => {
+                    const dateRaw = r.c[0].v;
+                    // 處理日期格式問題
+                    const dateKey = (typeof dateRaw === 'string') ? dateRaw : "2026 Data"; 
+                    
+                    if (!dailyData[dateKey]) {
+                        dailyData[dateKey] = { imp: 0, saves: 0, clicks: 0, outbound: 0, count: 0 };
+                    }
+                    dailyData[dateKey].imp += (r.c[1]?.v || 0);
+                    dailyData[dateKey].saves += (r.c[2]?.v || 0);
+                    dailyData[dateKey].clicks += (r.c[3]?.v || 0);
+                    dailyData[dateKey].outbound += (r.c[4]?.v || 0);
+                    dailyData[dateKey].count++;
+                });
+
+                const dateKeys = Object.keys(dailyData).sort();
+                const latestDate = dateKeys[dateKeys.length - 1];
+                const latest = dailyData[latestDate];
+
+                // 更新頂部數據
+                document.getElementById('impressions').innerText = formatNum(latest.imp);
+                document.getElementById('pinClicks').innerText = formatNum(latest.clicks);
+                document.getElementById('saves').innerText = formatNum(latest.saves);
+                document.getElementById('outboundClicks').innerText = formatNum(latest.outbound);
+                document.getElementById('syncStatus').innerHTML = `Last Updated: ${latestDate} <div class="live-dot"></div>`;
+
+                // 渲染趨勢圖
+                renderTrendChart(dateKeys, dailyData);
+                // 渲染圓餅圖
+                renderEngageChart(latest);
+                // 渲染表格 (顯示最後 5 筆原始 Pin)
+                renderTable(rows.slice(-5).reverse());
+
+            } catch (err) {
+                console.error("Dashboard Error:", err);
             }
         }
-    });
 
-    // Engagement Chart
-    const engCtx = document.getElementById('engagementChart').getContext('2d');
-    engagementChart = new Chart(engCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Saves', 'Clicks', 'Outbound'],
-            datasets: [{
-                data: [0, 0, 0],
-                backgroundColor: ['#0EA5E9', '#06B6D4', '#10B981'],
-                borderWidth: 0
-            }]
-        },
-        options: { responsive: true, maintainAspectRatio: false, cutout: '65%' }
-    });
-}
+        function formatNum(n) {
+            return n >= 1000 ? (n/1000).toFixed(1) + 'K' : n;
+        }
 
-// --- 3. 核心功能：從 Google Sheets 抓取數據 ---
-async function fetchSheetData() {
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${DATA_SHEET_NAME}`;
-    
-    try {
-        const response = await fetch(url);
-        const text = await response.text();
-        const data = JSON.parse(text.substr(47).slice(0, -2));
-        const rows = data.table.rows;
+        function renderTrendChart(labels, dailyData) {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Impressions',
+                        data: labels.map(l => dailyData[l].imp),
+                        borderColor: '#0EA5E9',
+                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                        fill: true, tension: 0.4
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
 
-        // 取得最新的一筆數據更新上方數值
-        const latestRow = rows[rows.length - 1].c;
-        document.getElementById('impressions').innerText = formatNum(latestRow[1].v);
-        document.getElementById('saves').innerText = formatNum(latestRow[2].v);
-        document.getElementById('pinClicks').innerText = formatNum(latestRow[3].v);
-        document.getElementById('outboundClicks').innerText = formatNum(latestRow[4].v);
+        function renderEngageChart(latest) {
+            const ctx = document.getElementById('engagementChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Saves', 'Clicks', 'Outbound'],
+                    datasets: [{
+                        data: [latest.saves, latest.clicks, latest.outbound],
+                        backgroundColor: ['#0EA5E9', '#06B6D4', '#10B981'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '70%' }
+            });
+        }
 
-        // 更新更新日期顯示
-        document.querySelector('.date-range').innerHTML = `Last Updated: ${latestRow[0].v} <div class="live-dot"></div>`;
+        function renderTable(recentRows) {
+            const body = document.getElementById('pinsTableBody');
+            body.innerHTML = recentRows.map(r => `
+                <tr>
+                    <td><div class="pin-title">${r.c[6]?.v || 'Terradomi Pin'}</div></td>
+                    <td>${formatNum(r.c[1]?.v || 0)}</td>
+                    <td>${r.c[2]?.v || 0}</td>
+                    <td>${r.c[3]?.v || 0}</td>
+                    <td><span style="color:#10B981">${r.c[5]?.v || 0}%</span></td>
+                </tr>
+            `).join('');
+        }
 
-        // 更新圖表數據 (取最後 7 筆作為趨勢圖)
-        const recentRows = rows.slice(-7);
-        performanceChart.data.labels = recentRows.map(r => r.c[0].v); // 日期
-        performanceChart.data.datasets[0].data = recentRows.map(r => r.c[1].v); // Impressions
-        performanceChart.data.datasets[1].data = recentRows.map(r => r.c[3].v); // Clicks
-        performanceChart.update();
-
-        // 更新圓餅圖
-        engagementChart.data.datasets[0].data = [latestRow[2].v, latestRow[3].v, latestRow[4].v];
-        engagementChart.update();
-
-        // 同時更新表格 (Top Pins)
-        updatePinsTable(rows);
-
-    } catch (error) {
-        console.error("數據加載失敗:", error);
-    }
-}
-
-// 格式化數字 (例如 1500 -> 1.5K)
-function formatNum(num) {
-    if (!num) return 0;
-    return num >= 1000 ? (num / 1000).toFixed(1) + 'K' : num;
-}
-
-// 更新表格邏輯
-function updatePinsTable(rows) {
-    const tableBody = document.getElementById('pinsTableBody');
-    const topPins = rows.slice(-3).reverse(); // 範例：取最後 3 個
-    
-    tableBody.innerHTML = topPins.map(r => `
-        <tr>
-            <td><div class="pin-info"><div><div class="pin-title">${r.c[6].v || 'Untitled Pin'}</div></div></div></td>
-            <td><div class="metric-value">${formatNum(r.c[1].v)}</div></td>
-            <td><div class="metric-value">${formatNum(r.c[2].v)}</div></td>
-            <td><div class="metric-value">${formatNum(r.c[3].v)}</div></td>
-            <td><span class="metric-value" style="color: var(--success);">${r.c[5].v}%</span></td>
-        </tr>
-    `).join('');
-}
-
-// 關鍵字搜尋 (這部分可以串接第二張表，或者保留模擬)
-async function searchKeywords() {
-    const input = document.getElementById('keywordInput').value.toLowerCase();
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${KEYWORD_SHEET_NAME}`;
-    
-    try {
-        const response = await fetch(url);
-        const text = await response.text();
-        const data = JSON.parse(text.substr(47).slice(0, -2));
-        const rows = data.table.rows;
-        
-        const filtered = rows.filter(r => r.c[1].v.toLowerCase().includes(input)).slice(0, 6);
-        const results = document.getElementById('keywordResults');
-        
-        results.innerHTML = filtered.map(r => `
-            <div class="keyword-tag">
-                <span class="keyword-text">${r.c[1].v}</span>
-                <span class="keyword-volume">${r.c[2].v}</span>
-            </div>
-        `).join('');
-    } catch (e) {
-        console.log("關鍵字搜尋失敗，切換為模擬模式");
-    }
-}
-
-// --- 4. 啟動 ---
-window.onload = () => {
-    initCharts();
-    fetchSheetData();
-};
+        window.onload = initDashboard;
     </script>
 </body>
 </html>
