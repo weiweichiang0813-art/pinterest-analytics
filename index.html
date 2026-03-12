@@ -3,160 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PinTrend Analytics | Creator Insight Portal</title>
+    <title>PinTrend Analytics | wwclab. Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --pinterest-red: #E60023;
-            --text-dark: #111111;
-            --bg-light: #FFFFFF;
-        }
-
+        :root { --brand-blue: #0A1F44; --bg: #FFFFFF; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: 'Manrope', sans-serif; 
-            background: var(--bg-light); 
-            color: var(--text-dark);
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
+            font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--brand-blue); 
+            height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; 
         }
+        .hero { text-align: center; max-width: 600px; padding: 2rem; animation: fadeIn 1s ease-out; }
+        
+        /* 圓形 Logo 容器 */
+        .logo-container { 
+            width: 120px; height: 120px; margin: 0 auto 2.5rem; 
+            border-radius: 50%; overflow: hidden; 
+            border: 2px solid var(--brand-blue); 
+            box-shadow: 0 10px 30px rgba(10, 31, 68, 0.12);
+            background: #fff; transition: 0.3s;
+        }
+        .logo-container:hover { transform: scale(1.1); }
+        .logo-container img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Hero Container */
-        .hero {
-            text-align: center;
-            max-width: 600px;
-            padding: 2rem;
-            animation: fadeIn 1s ease-out;
-        }
+        h1 { font-family: 'Instrument Serif', serif; font-size: 3.5rem; line-height: 1.1; margin-bottom: 1.5rem; color: #111; }
+        h1 em { font-style: italic; color: var(--brand-blue); }
+        p { font-size: 1.1rem; color: #666; margin-bottom: 2.5rem; font-weight: 300; }
 
-        /* PinTrend Logo SVG */
-        .logo-container {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 2rem;
-            filter: drop-shadow(0 10px 20px rgba(230, 0, 35, 0.2));
-            transition: transform 0.3s ease;
-        }
-        .logo-container:hover { transform: scale(1.1) rotate(5deg); }
-
-        h1 {
-            font-family: 'Instrument Serif', serif;
-            font-size: 3.5rem;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-        }
-        h1 em {
-            font-style: italic;
-            color: var(--pinterest-red);
-        }
-
-        p {
-            font-size: 1.1rem;
-            color: #555;
-            margin-bottom: 2.5rem;
-            font-weight: 300;
-        }
-
-        /* 專業跳轉按鈕 */
         .btn-portal {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            background: var(--pinterest-red);
-            color: white;
-            text-decoration: none;
-            padding: 16px 40px;
-            border-radius: 100px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            box-shadow: 0 10px 25px rgba(230, 0, 35, 0.3);
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            display: inline-flex; align-items: center; gap: 12px;
+            background: var(--brand-blue); color: white; text-decoration: none;
+            padding: 18px 45px; border-radius: 100px; font-weight: 600; font-size: 1.1rem;
+            box-shadow: 0 10px 25px rgba(10, 31, 68, 0.2); transition: 0.3s; border: none; cursor: pointer;
         }
-        .btn-portal:hover {
-            background: #ad001a;
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(230, 0, 35, 0.4);
-        }
+        .btn-portal:hover { background: #061530; transform: translateY(-3px); }
 
-        .footer-links {
-            position: absolute;
-            bottom: 40px;
-            font-size: 0.8rem;
-            color: #999;
-        }
-        .footer-links a { color: #999; text-decoration: none; margin: 0 10px; }
-        .footer-links a:hover { color: var(--pinterest-red); }
+        .footer-links { position: absolute; bottom: 40px; font-size: 0.8rem; color: #AAA; }
+        .footer-links a { color: #AAA; text-decoration: none; margin: 0 10px; }
+        .footer-links a:hover { color: var(--brand-blue); }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-
     <div class="hero">
         <div class="logo-container">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="48" fill="#E60023"/>
-                <rect x="42" y="55" width="16" height="30" rx="4" fill="white"/>
-                <path d="M50 15C50 15 62 28 62 38C62 48 50 55 50 55C50 55 38 48 38 38C38 28 50 15 50 15Z" fill="white"/>
-                <circle cx="50" cy="38" r="4" fill="#E60023"/>
-                <rect x="49" y="48" width="2" height="7" fill="white"/>
-            </svg>
+            <img src="logo.png" alt="wwclab. logo">
         </div>
-
         <h1>Unlock Your <em>Pinterest</em> Potential</h1>
-        <p>Professional creator insights, keyword trends, and performance tracking for data-driven growth.</p>
-
-        <button class="btn-portal" id="authBtn">
+        <p>Professional creator insights and performance tracking powered by wwclab.</p>
+        
+        <button class="btn-portal" onclick="window.location.href='dashboard.html'">
             Analyze with PinTrend
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
         </button>
     </div>
 
     <div class="footer-links">
         <a href="privacy.html">Privacy Policy</a> • 
-        <span>© 2026 PinTrend Analytics</span>
+        <span>© 2026 wwclab. Analytics</span>
     </div>
-
-    <script>
-        // --- Pinterest API 配置 ---
-        const PINTEREST_CONFIG = {
-            clientId: '1552254', // 你的 App ID
-            redirectUri: 'https://weiweichiang0813-art.github.io/pinterest-analytics/dashboard.html',
-            scope: 'read_users,read_pins,read_boards', 
-            state: 'pintrend_' + Math.random().toString(36).substring(7) 
-        };
-
-        function handlePortalAccess() {
-            console.log("正在準備授權請求...");
-
-            // 構造 Pinterest 官方 OAuth 授權網址
-            const authUrl = `https://www.pinterest.com/oauth/` +
-                `?client_id=${PINTEREST_CONFIG.clientId}` +
-                `&redirect_uri=${encodeURIComponent(PINTEREST_CONFIG.redirectUri)}` +
-                `&response_type=code` +
-                `&scope=${PINTEREST_CONFIG.scope}` +
-                `&state=${PINTEREST_CONFIG.state}`;
-
-            /* 【開發模式切換】
-               當 Pinterest 審核通過後，請將下一行取消註釋 (Uncomment)：
-               window.location.href = authUrl; 
-            */
-
-            // 目前測試階段，我們先直接導向 Dashboard 頁面
-            window.location.href = 'dashboard.html';
-        }
-
-        // 綁定點擊事件
-        document.getElementById('authBtn').addEventListener('click', handlePortalAccess);
-    </script>
-
 </body>
 </html>
