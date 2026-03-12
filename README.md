@@ -4,7 +4,7 @@ PinTrend Analytics is a professional analytics platform designed for Pinterest c
 
 ---
 
-## Project Structure
+## 📂 Project Structure
 
 - **index.html**: Landing Page (wwclab. branded product entry)
 - **dashboard.html**: Analytics Dashboard (Trend visualization)
@@ -14,28 +14,38 @@ PinTrend Analytics is a professional analytics platform designed for Pinterest c
 
 ---
 
-## Quick Start Guide
+## 🚀 Quick Start Guide
 
-### 1. Local Setup
+## 1. Local Setup
+
 ```bash
 cd scraper
 pip install -r requirements.txt
 playwright install chromium
-Note: Place your 'credentials.json' inside the scraper folder.
+Note: Place your credentials.json inside the scraper/ folder.
+```
 
-2. GitHub Secrets Configuration
+## 2. GitHub Secrets Configuration
+
+```bash
 Go to Settings > Secrets and variables > Actions and add:
 
 GOOGLE_CREDENTIALS: Full content of credentials.json
 
 PINTEREST_SESSION: Content of pinterest_session.json
+```
 
-3. Automation
+## 3. Automation
+
+```bash
 Schedule: Daily at 9:00 AM EST.
 
 Manual: Go to Actions tab and click "Run workflow".
+```
 
-Core Features
+## 📊 Core Features
+
+```bash
 wwclab. Visual Identity: Deep-blue professional theme with circular logo.
 
 Smart Data Cleaning: Automatically removes "Untitled Pin" or "Pinterest" entries.
@@ -43,8 +53,11 @@ Smart Data Cleaning: Automatically removes "Untitled Pin" or "Pinterest" entries
 Performance Trends: Interactive charts for Impressions, Clicks, and Saves.
 
 OAuth 2.0 Ready: Pre-configured for official Pinterest API integration.
+```
 
-Data Schema (Google Sheets)
+## 🛠️ Data Schema (Google Sheets)
+
+```bash
 date: Sync Date (YYYY-MM-DD)
 
 impressions: Cumulative views
@@ -58,8 +71,11 @@ outbound_clicks: Clicks to external website (Terradomi)
 engagement_rate: (Clicks + Saves) / Impressions * 100
 
 pin_title: Validated title (Filtered for accuracy)
+```
 
-Developer Information
+## 👨‍💻 Developer Information
+
+```bash
 Built by: Wei Wei Chiang
 
 Brand: wwclab.
@@ -67,7 +83,8 @@ Brand: wwclab.
 GitHub: weiweichiang0813-art
 
 Portfolio: View My Work
+```
 
-Note for API Reviewers
+## 📝 Note for API Reviewers
 The authorized Redirect URI for the Pinterest App (ID: 1552254) is:
 https://www.google.com/search?q=https://weiweichiang0813-art.github.io/pinterest-analytics/dashboard.html
