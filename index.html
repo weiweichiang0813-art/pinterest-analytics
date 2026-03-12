@@ -3,847 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pinterest Analytics Tool | Track & Optimize Your Pinterest Performance</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <title>PinTrend Analytics | Creator Insight Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #FAFBFC;
-            --bg-elevated: #FFFFFF;
-            --bg-dark: #0F172A;
-            --text: #1E3A5F;
-            --text-muted: #64748B;
-            --text-light: #F8FAFC;
-            --accent: #E60023;
-            --accent-secondary: #BD081C;
-            --accent-dim: rgba(230, 0, 35, 0.08);
             --pinterest-red: #E60023;
-            --blue: #0EA5E9;
-            --cyan: #06B6D4;
-            --border: #E2E8F0;
-            --shadow: rgba(15, 23, 42, 0.08);
+            --text-dark: #111111;
+            --bg-light: #FFFFFF;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body {
-            font-family: 'Manrope', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 100;
-            padding: 1rem 2rem;
-            background: rgba(250, 251, 252, 0.9);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-        }
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            text-decoration: none;
-        }
-        .logo-icon {
-            width: 36px; height: 36px;
-            background: var(--pinterest-red);
-            border-radius: 10px;
+        body { 
+            font-family: 'Manrope', sans-serif; 
+            background: var(--bg-light); 
+            color: var(--text-dark);
+            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        .logo-icon svg { width: 20px; height: 20px; color: white; }
-        .logo-text {
-            font-family: 'Instrument Serif', serif;
-            font-size: 1.25rem;
-            color: var(--text);
-        }
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-            list-style: none;
-        }
-        .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-        .nav-links a:hover { color: var(--text); }
-        .nav-cta {
-            background: var(--pinterest-red);
-            color: white !important;
-            padding: 0.6rem 1.25rem;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-        .nav-cta:hover { background: var(--accent-secondary); }
-
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            padding: 8rem 2rem 4rem;
-            position: relative;
             overflow: hidden;
         }
-        .hero-bg {
-            position: absolute;
-            top: -50%; right: -20%;
-            width: 800px; height: 800px;
-            background: radial-gradient(circle, rgba(230, 0, 35, 0.08) 0%, transparent 70%);
-            pointer-events: none;
+
+        /* Hero Container */
+        .hero {
+            text-align: center;
+            max-width: 600px;
+            padding: 2rem;
+            animation: fadeIn 1s ease-out;
         }
-        .hero-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
+
+        /* 你的新 Logo SVG */
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 2rem;
+            filter: drop-shadow(0 10px 20px rgba(230, 0, 35, 0.2));
+            transition: transform 0.3s ease;
         }
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: var(--accent-dim);
-            color: var(--pinterest-red);
-            padding: 0.5rem 1rem;
-            border-radius: 100px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-        }
-        .hero-badge svg { width: 16px; height: 16px; }
-        .hero-title {
+        .logo-container:hover { transform: scale(1.1) rotate(5deg); }
+
+        h1 {
             font-family: 'Instrument Serif', serif;
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 400;
+            font-size: 3.5rem;
             line-height: 1.1;
             margin-bottom: 1.5rem;
-            color: var(--text);
         }
-        .hero-title em {
+        h1 em {
             font-style: italic;
             color: var(--pinterest-red);
         }
-        .hero-description {
-            font-size: 1.15rem;
-            color: var(--text-muted);
-            margin-bottom: 2rem;
-            max-width: 480px;
-            line-height: 1.8;
+
+        p {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 2.5rem;
+            font-weight: 300;
         }
-        .hero-cta {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-        .btn {
+
+        /* 登入按鈕 */
+        .btn-portal {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.9rem 1.75rem;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-primary {
+            gap: 12px;
             background: var(--pinterest-red);
             color: white;
-            box-shadow: 0 4px 15px rgba(230, 0, 35, 0.3);
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(230, 0, 35, 0.35);
-        }
-        .btn-secondary {
-            background: var(--bg-elevated);
-            color: var(--text);
-            border: 1px solid var(--border);
-        }
-        .btn-secondary:hover {
-            border-color: var(--text);
-        }
-        .btn svg { width: 18px; height: 18px; }
-
-        /* Hero Visual */
-        .hero-visual {
-            position: relative;
-        }
-        .dashboard-preview {
-            background: var(--bg-elevated);
-            border-radius: 20px;
-            box-shadow: 0 25px 80px rgba(15, 23, 42, 0.15);
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }
-        .preview-header {
-            background: var(--bg);
-            padding: 0.75rem 1rem;
-            display: flex;
-            gap: 0.5rem;
-            border-bottom: 1px solid var(--border);
-        }
-        .preview-dot {
-            width: 10px; height: 10px;
-            border-radius: 50%;
-            background: var(--border);
-        }
-        .preview-dot:nth-child(1) { background: #EF4444; }
-        .preview-dot:nth-child(2) { background: #F59E0B; }
-        .preview-dot:nth-child(3) { background: #10B981; }
-        .preview-content {
-            padding: 1.5rem;
-        }
-        .preview-stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        .preview-stat {
-            background: var(--bg);
-            padding: 1rem;
-            border-radius: 12px;
-        }
-        .preview-stat-value {
-            font-family: 'Instrument Serif', serif;
-            font-size: 1.5rem;
-            color: var(--pinterest-red);
-        }
-        .preview-stat-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-        .preview-chart {
-            height: 120px;
-            background: linear-gradient(180deg, rgba(230, 0, 35, 0.1) 0%, transparent 100%);
-            border-radius: 12px;
-            position: relative;
-            overflow: hidden;
-        }
-        .preview-chart-line {
-            position: absolute;
-            bottom: 20%;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--pinterest-red);
-            clip-path: polygon(0 100%, 5% 60%, 15% 80%, 25% 40%, 35% 60%, 45% 30%, 55% 50%, 65% 20%, 75% 40%, 85% 10%, 95% 30%, 100% 0, 100% 100%);
-        }
-
-        /* Features Section */
-        .features {
-            padding: 6rem 2rem;
-            background: var(--bg-elevated);
-        }
-        .section-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .section-header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-        .section-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: var(--pinterest-red);
-            margin-bottom: 1rem;
-        }
-        .section-title {
-            font-family: 'Instrument Serif', serif;
-            font-size: clamp(2rem, 4vw, 3rem);
-            color: var(--text);
-            margin-bottom: 1rem;
-        }
-        .section-subtitle {
+            text-decoration: none;
+            padding: 16px 40px;
+            border-radius: 100px;
+            font-weight: 600;
             font-size: 1.1rem;
-            color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto;
+            box-shadow: 0 10px 25px rgba(230, 0, 35, 0.3);
+            transition: all 0.3s ease;
         }
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-        }
-        .feature-card {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 2rem;
-            transition: all 0.3s;
-        }
-        .feature-card:hover {
-            border-color: var(--pinterest-red);
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px var(--shadow);
-        }
-        .feature-icon {
-            width: 56px; height: 56px;
-            background: var(--accent-dim);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-        }
-        .feature-icon svg {
-            width: 28px; height: 28px;
-            color: var(--pinterest-red);
-        }
-        .feature-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--text);
-        }
-        .feature-description {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            line-height: 1.7;
+        .btn-portal:hover {
+            background: #ad001a;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(230, 0, 35, 0.4);
         }
 
-        /* How It Works */
-        .how-it-works {
-            padding: 6rem 2rem;
-            background: var(--bg-dark);
-            color: var(--text-light);
-        }
-        .how-it-works .section-label { color: rgba(255,255,255,0.6); }
-        .how-it-works .section-title { color: white; }
-        .how-it-works .section-subtitle { color: rgba(255,255,255,0.7); }
-        .steps-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin-top: 4rem;
-        }
-        .step-card {
-            text-align: center;
-            padding: 2rem;
-        }
-        .step-number {
-            font-family: 'Instrument Serif', serif;
-            font-size: 4rem;
-            color: var(--pinterest-red);
-            line-height: 1;
-            margin-bottom: 1.5rem;
-        }
-        .step-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: white;
-        }
-        .step-description {
-            font-size: 0.95rem;
-            color: rgba(255,255,255,0.6);
-            line-height: 1.7;
-        }
-
-        /* CTA Section */
-        .cta-section {
-            padding: 6rem 2rem;
-            text-align: center;
-        }
-        .cta-box {
-            max-width: 700px;
-            margin: 0 auto;
-            background: linear-gradient(135deg, var(--pinterest-red), var(--accent-secondary));
-            border-radius: 24px;
-            padding: 4rem;
-            color: white;
-        }
-        .cta-title {
-            font-family: 'Instrument Serif', serif;
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        .cta-description {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-bottom: 2rem;
-        }
-        .cta-btn {
-            background: white;
-            color: var(--pinterest-red);
-            padding: 1rem 2.5rem;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.2s;
-        }
-        .cta-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        /* Footer */
-        footer {
-            padding: 3rem 2rem;
-            text-align: center;
-            border-top: 1px solid var(--border);
-        }
-        .footer-text {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-        .footer-text a {
-            color: var(--pinterest-red);
-            text-decoration: none;
-        }
-
-        /* Password Modal */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-        }
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        .modal-content {
-            background: white;
-            border-radius: 24px;
-            padding: 2.5rem;
-            max-width: 420px;
-            width: 90%;
-            text-align: center;
-            transform: scale(0.9);
-            transition: transform 0.3s;
-        }
-        .modal-overlay.active .modal-content {
-            transform: scale(1);
-        }
-        .modal-icon {
-            width: 64px; height: 64px;
-            background: var(--accent-dim);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-        }
-        .modal-icon svg {
-            width: 32px; height: 32px;
-            color: var(--pinterest-red);
-        }
-        .modal-title {
-            font-family: 'Instrument Serif', serif;
-            font-size: 1.75rem;
-            color: var(--text);
-            margin-bottom: 0.5rem;
-        }
-        .modal-subtitle {
-            color: var(--text-muted);
-            margin-bottom: 1.5rem;
-        }
-        .password-input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            font-size: 1rem;
-            text-align: center;
-            letter-spacing: 0.2em;
-            margin-bottom: 1rem;
-            transition: border-color 0.2s;
-        }
-        .password-input:focus {
-            outline: none;
-            border-color: var(--pinterest-red);
-        }
-        .password-error {
-            color: #EF4444;
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
-            display: none;
-        }
-        .modal-btn {
-            width: 100%;
-            padding: 1rem;
-            background: var(--pinterest-red);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .modal-btn:hover {
-            background: var(--accent-secondary);
-        }
-        .modal-close {
+        .footer-links {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
-            width: 36px; height: 36px;
-            border: none;
-            background: var(--bg);
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            bottom: 40px;
+            font-size: 0.8rem;
+            color: #999;
         }
+        .footer-links a { color: #999; text-decoration: none; margin: 0 10px; }
+        .footer-links a:hover { color: var(--pinterest-red); }
 
-        /* Responsive */
-        @media (max-width: 900px) {
-            .hero-container { grid-template-columns: 1fr; text-align: center; }
-            .hero-description { margin: 0 auto 2rem; }
-            .hero-cta { justify-content: center; }
-            .hero-visual { display: none; }
-            .features-grid, .steps-grid { grid-template-columns: 1fr; }
-            .nav-links { display: none; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav>
-        <div class="nav-container">
-            <a href="#" class="logo">
-                <div class="logo-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/>
-                    </svg>
-                </div>
-                <span class="logo-text">Pinterest Analytics</span>
-            </a>
-            <ul class="nav-links">
-                <li><a href="#features">Features</a></li>
-                <li><a href="#how-it-works">How It Works</a></li>
-                <li><a href="#" class="nav-cta" onclick="openModal()">Get Started</a></li>
-            </ul>
-        </div>
-    </nav>
 
-    <!-- Hero -->
-    <section class="hero">
-        <div class="hero-bg"></div>
-        <div class="hero-container">
-            <div class="hero-content">
-                <div class="hero-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                    </svg>
-                    Free Analytics Tool
-                </div>
-                <h1 class="hero-title">
-                    Unlock Your <em>Pinterest</em> Potential
-                </h1>
-                <p class="hero-description">
-                    Track impressions, analyze engagement, discover trending keywords, 
-                    and optimize your content strategy with powerful analytics.
-                </p>
-                <div class="hero-cta">
-                    <button class="btn btn-primary" onclick="openModal()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-                            <polyline points="10 17 15 12 10 7"/>
-                            <line x1="15" y1="12" x2="3" y2="12"/>
-                        </svg>
-                        Start Analyzing
-                    </button>
-                    <a href="#features" class="btn btn-secondary">
-                        Learn More
-                    </a>
-                </div>
-            </div>
-            <div class="hero-visual">
-                <div class="dashboard-preview">
-                    <div class="preview-header">
-                        <div class="preview-dot"></div>
-                        <div class="preview-dot"></div>
-                        <div class="preview-dot"></div>
-                    </div>
-                    <div class="preview-content">
-                        <div class="preview-stats">
-                            <div class="preview-stat">
-                                <div class="preview-stat-value">156.8K</div>
-                                <div class="preview-stat-label">Impressions</div>
-                            </div>
-                            <div class="preview-stat">
-                                <div class="preview-stat-value">12.4K</div>
-                                <div class="preview-stat-label">Pin Clicks</div>
-                            </div>
-                            <div class="preview-stat">
-                                <div class="preview-stat-value">3.2K</div>
-                                <div class="preview-stat-label">Saves</div>
-                            </div>
-                            <div class="preview-stat">
-                                <div class="preview-stat-value">8.2%</div>
-                                <div class="preview-stat-label">Engagement</div>
-                            </div>
-                        </div>
-                        <div class="preview-chart">
-                            <div class="preview-chart-line"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="hero">
+        <div class="logo-container">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="48" fill="#E60023"/>
+                <rect x="42" y="55" width="16" height="30" rx="4" fill="white"/>
+                <path d="M50 15C50 15 62 28 62 38C62 48 50 55 50 55C50 55 38 48 38 38C38 28 50 15 50 15Z" fill="white"/>
+                <circle cx="50" cy="38" r="4" fill="#E60023"/>
+                <rect x="49" y="48" width="2" height="7" fill="white"/>
+            </svg>
         </div>
-    </section>
 
-    <!-- Features -->
-    <section class="features" id="features">
-        <div class="section-container">
-            <div class="section-header">
-                <div class="section-label">Features</div>
-                <h2 class="section-title">Everything You Need to Grow</h2>
-                <p class="section-subtitle">
-                    Comprehensive analytics tools designed for Pinterest creators and marketers
-                </p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                            <circle cx="12" cy="12" r="3"/>
-                        </svg>
-                    </div>
-                    <h3 class="feature-title">Performance Tracking</h3>
-                    <p class="feature-description">
-                        Monitor impressions, saves, clicks, and engagement rates in real-time. 
-                        Understand what content resonates with your audience.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                            <polyline points="17 6 23 6 23 12"/>
-                        </svg>
-                    </div>
-                    <h3 class="feature-title">Trend Analysis</h3>
-                    <p class="feature-description">
-                        Discover trending topics and keywords on Pinterest. 
-                        Stay ahead of the curve and create content that captures attention.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"/>
-                            <path d="m21 21-4.35-4.35"/>
-                        </svg>
-                    </div>
-                    <h3 class="feature-title">Keyword Research</h3>
-                    <p class="feature-description">
-                        Find high-performing keywords and search suggestions. 
-                        Optimize your pins for maximum discoverability.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                        </svg>
-                    </div>
-                    <h3 class="feature-title">Top Pins Ranking</h3>
-                    <p class="feature-description">
-                        Identify your best-performing pins at a glance. 
-                        Learn from your successes and replicate winning strategies.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                            <line x1="16" y1="2" x2="16" y2="6"/>
-                            <line x1="8" y1="2" x2="8" y2="6"/>
-                            <line x1="3" y1="10" x2="21" y2="10"/>
-                        </svg>
-                    </div>
-                    <h3 class="feature-title">Daily Auto-Refresh</h3>
-                    <p class="feature-description">
-                        Data automatically updates every day. 
-                        Always have access to the latest insights without manual work.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                            <polyline points="15 3 21 3 21 9"/>
-                            <line x1="10" y1="14" x2="21" y2="3"/>
-                        </svg>
-                    </div>
-                    <h3 class="feature-title">Outbound Clicks</h3>
-                    <p class="feature-description">
-                        Track how many users click through to your website. 
-                        Measure the real impact of your Pinterest strategy.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
+        <h1>Unlock Your <em>Pinterest</em> Potential</h1>
+        <p>Professional creator insights, keyword trends, and performance tracking for data-driven growth.</p>
 
-    <!-- How It Works -->
-    <section class="how-it-works" id="how-it-works">
-        <div class="section-container">
-            <div class="section-header">
-                <div class="section-label">How It Works</div>
-                <h2 class="section-title">Get Started in 3 Simple Steps</h2>
-                <p class="section-subtitle">
-                    Set up your analytics dashboard in minutes
-                </p>
-            </div>
-            <div class="steps-grid">
-                <div class="step-card">
-                    <div class="step-number">1</div>
-                    <h3 class="step-title">Enter Access Code</h3>
-                    <p class="step-description">
-                        Use the access code provided to unlock the dashboard. 
-                        Your data stays private and secure.
-                    </p>
-                </div>
-                <div class="step-card">
-                    <div class="step-number">2</div>
-                    <h3 class="step-title">Connect Pinterest</h3>
-                    <p class="step-description">
-                        Link your Pinterest Business account to start 
-                        collecting analytics data automatically.
-                    </p>
-                </div>
-                <div class="step-card">
-                    <div class="step-number">3</div>
-                    <h3 class="step-title">Analyze & Grow</h3>
-                    <p class="step-description">
-                        View your dashboard, discover insights, and 
-                        make data-driven decisions to grow your presence.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="cta-section">
-        <div class="cta-box">
-            <h2 class="cta-title">Ready to Grow Your Pinterest?</h2>
-            <p class="cta-description">
-                Start tracking your performance and discovering new opportunities today.
-            </p>
-            <a href="#" class="cta-btn" onclick="openModal(); return false;">
-                Get Started Now
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-            </a>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <p class="footer-text">
-            Built by <a href="https://weiweichiang0813-art.github.io/profolio/" target="_blank">Wei Wei Chiang</a> • 
-            © 2026 Pinterest Analytics Tool
-        </p>
-    </footer>
-
-    <!-- Password Modal -->
-    <div class="modal-overlay" id="passwordModal" onclick="closeModal(event)">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                </svg>
-            </div>
-            <h3 class="modal-title">Enter Access Code</h3>
-            <p class="modal-subtitle">Enter the password to access the dashboard</p>
-            <input type="password" class="password-input" id="passwordInput" placeholder="••••••" maxlength="20">
-            <p class="password-error" id="passwordError">Incorrect password. Please try again.</p>
-            <button class="modal-btn" onclick="checkPassword()">
-                Access Dashboard
-            </button>
-        </div>
+        <a href="dashboard.html" class="btn-portal">
+            Analyze with PinTrend
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
     </div>
 
-    <script>
-        // Password: pinterest2026 (you can change this)
-        const ACCESS_PASSWORD = 'pinterest2026';
+    <div class="footer-links">
+        <a href="privacy.html">Privacy Policy</a> • 
+        <span>© 2026 PinTrend Analytics</span>
+    </div>
 
-        function openModal() {
-            document.getElementById('passwordModal').classList.add('active');
-            document.getElementById('passwordInput').focus();
-        }
-
-        function closeModal(event) {
-            if (event.target === document.getElementById('passwordModal')) {
-                document.getElementById('passwordModal').classList.remove('active');
-                document.getElementById('passwordError').style.display = 'none';
-                document.getElementById('passwordInput').value = '';
-            }
-        }
-
-        function checkPassword() {
-            const input = document.getElementById('passwordInput').value;
-            if (input === ACCESS_PASSWORD) {
-                // Redirect to dashboard
-                window.location.href = 'dashboard.html';
-            } else {
-                document.getElementById('passwordError').style.display = 'block';
-                document.getElementById('passwordInput').value = '';
-                document.getElementById('passwordInput').focus();
-            }
-        }
-
-        // Enter key to submit
-        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkPassword();
-            }
-        });
-
-        // Close modal on Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                document.getElementById('passwordModal').classList.remove('active');
-            }
-        });
-    </script>
 </body>
 </html>
