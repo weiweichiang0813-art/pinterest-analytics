@@ -28,49 +28,49 @@ Note: Place your credentials.json inside the scraper/ folder.
 ## 2. GitHub Secrets Configuration
 
 
-Go to Settings > Secrets and variables > Actions and add:
+- Go to Settings > Secrets and variables > Actions and add:
 
-GOOGLE_CREDENTIALS: Full content of credentials.json
+- GOOGLE_CREDENTIALS: Full content of credentials.json
 
-PINTEREST_SESSION: Content of pinterest_session.json
+- PINTEREST_SESSION: Content of pinterest_session.json
 
 
 ## 3. Automation
 
 
-Schedule: Daily at 9:00 AM EST.
+- Schedule: Daily at 9:00 AM EST.
 
-Manual: Go to Actions tab and click "Run workflow".
+- Manual: Go to Actions tab and click "Run workflow".
 
 
 ## 📊 Core Features
 
 
-wwclab. Visual Identity: Deep-blue professional theme with circular logo.
+- wwclab. Visual Identity: Deep-blue professional theme with circular logo.
 
-Smart Data Cleaning: Automatically removes "Untitled Pin" or "Pinterest" entries.
+- Smart Data Cleaning: Automatically removes "Untitled Pin" or "Pinterest" entries.
 
-Performance Trends: Interactive charts for Impressions, Clicks, and Saves.
+- Performance Trends: Interactive charts for Impressions, Clicks, and Saves.
 
-OAuth 2.0 Ready: Pre-configured for official Pinterest API integration.
+- OAuth 2.0 Ready: Pre-configured for official Pinterest API integration.
 
 
 ## 🛠️ Data Schema (Google Sheets)
 
 
-date: Sync Date (YYYY-MM-DD)
+- date: Sync Date (YYYY-MM-DD)
 
-impressions: Cumulative views
+- impressions: Cumulative views
 
-saves: Total times saved
+- saves: Total times saved
 
-pin_clicks: Total closeup clicks
+- pin_clicks: Total closeup clicks
 
-outbound_clicks: Clicks to external website (Terradomi)
+- outbound_clicks: Clicks to external website (Terradomi)
 
-engagement_rate: (Clicks + Saves) / Impressions * 100
+- engagement_rate: (Clicks + Saves) / Impressions * 100
 
-pin_title: Validated title (Filtered for accuracy)
+- pin_title: Validated title (Filtered for accuracy)
 
 
 ## 👨‍💻 Developer Information
