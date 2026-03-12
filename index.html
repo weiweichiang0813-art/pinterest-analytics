@@ -32,7 +32,7 @@
             animation: fadeIn 1s ease-out;
         }
 
-        /* 你的新 Logo SVG */
+        /* PinTrend Logo SVG */
         .logo-container {
             width: 100px;
             height: 100px;
@@ -60,7 +60,7 @@
             font-weight: 300;
         }
 
-        /* 登入按鈕 */
+        /* 專業跳轉按鈕 */
         .btn-portal {
             display: inline-flex;
             align-items: center;
@@ -73,6 +73,8 @@
             font-weight: 600;
             font-size: 1.1rem;
             box-shadow: 0 10px 25px rgba(230, 0, 35, 0.3);
+            border: none;
+            cursor: pointer;
             transition: all 0.3s ease;
         }
         .btn-portal:hover {
@@ -112,16 +114,49 @@
         <h1>Unlock Your <em>Pinterest</em> Potential</h1>
         <p>Professional creator insights, keyword trends, and performance tracking for data-driven growth.</p>
 
-        <a href="dashboard.html" class="btn-portal">
+        <button class="btn-portal" id="authBtn">
             Analyze with PinTrend
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-        </a>
+        </button>
     </div>
 
     <div class="footer-links">
         <a href="privacy.html">Privacy Policy</a> • 
         <span>© 2026 PinTrend Analytics</span>
     </div>
+
+    <script>
+        // --- Pinterest API 配置 ---
+        const PINTEREST_CONFIG = {
+            clientId: '1552254', // 你的 App ID
+            redirectUri: 'https://weiweichiang0813-art.github.io/pinterest-analytics/dashboard.html',
+            scope: 'read_users,read_pins,read_boards', 
+            state: 'pintrend_' + Math.random().toString(36).substring(7) 
+        };
+
+        function handlePortalAccess() {
+            console.log("正在準備授權請求...");
+
+            // 構造 Pinterest 官方 OAuth 授權網址
+            const authUrl = `https://www.pinterest.com/oauth/` +
+                `?client_id=${PINTEREST_CONFIG.clientId}` +
+                `&redirect_uri=${encodeURIComponent(PINTEREST_CONFIG.redirectUri)}` +
+                `&response_type=code` +
+                `&scope=${PINTEREST_CONFIG.scope}` +
+                `&state=${PINTEREST_CONFIG.state}`;
+
+            /* 【開發模式切換】
+               當 Pinterest 審核通過後，請將下一行取消註釋 (Uncomment)：
+               window.location.href = authUrl; 
+            */
+
+            // 目前測試階段，我們先直接導向 Dashboard 頁面
+            window.location.href = 'dashboard.html';
+        }
+
+        // 綁定點擊事件
+        document.getElementById('authBtn').addEventListener('click', handlePortalAccess);
+    </script>
 
 </body>
 </html>
