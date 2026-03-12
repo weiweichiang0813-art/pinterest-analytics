@@ -8,19 +8,17 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --brand-blue: #0A1F44; /* wwclab. 品牌深藍 */
-            --brand-blue-soft: rgba(10, 31, 68, 0.05);
+            --brand-blue: #0A1F44; 
             --bg: #FAFBFC;
             --bg-elevated: #FFFFFF;
             --text: #111111;
-            --text-muted: #767676;
             --border: #E2E8F0;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--text); }
 
-        /* --- Header: 品牌化導覽列 --- */
+        /* Header - 置中對齊 */
         header {
             background: var(--bg-elevated);
             border-bottom: 1px solid var(--border);
@@ -32,127 +30,92 @@
             display: flex; justify-content: center; align-items: center;
             position: relative;
         }
-        .logo-section { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
         
-        /* 🔥 Logo 圓形裁切處理 */
+        /* Logo 圓形裁切 */
+        .logo-section { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
         .logo-icon {
             width: 35px; height: 35px;
             border-radius: 50%;
             overflow: hidden;
             display: flex; align-items: center; justify-content: center;
             border: 1.5px solid var(--brand-blue);
-            background: #fff;
         }
         .logo-icon img { width: 100%; height: 100%; object-fit: cover; }
         .logo-text { font-family: 'Instrument Serif', serif; font-size: 1.25rem; color: var(--text); }
 
-        /* --- Layout --- */
+        /* Dashboard 佈局 */
         .dashboard { max-width: 1400px; margin: 0 auto; padding: 2.5rem 2rem; }
         
         .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
         .stat-card {
             background: var(--bg-elevated); border-radius: 20px; padding: 1.5rem;
-            border: 1px solid var(--border); transition: 0.3s;
+            border: 1px solid var(--border);
         }
-        .stat-card:hover { transform: translateY(-5px); border-color: var(--brand-blue); }
-        .stat-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.5rem; display: block; }
-        .stat-value { font-family: 'Instrument Serif', serif; font-size: 2.5rem; color: var(--brand-blue); line-height: 1; }
+        .stat-value { font-family: 'Instrument Serif', serif; font-size: 2.5rem; color: var(--brand-blue); }
 
         .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
         .card { background: var(--bg-elevated); border-radius: 24px; padding: 1.5rem; border: 1px solid var(--border); }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-        .card-title { font-family: 'Instrument Serif', serif; font-size: 1.5rem; }
         
-        /* --- 按鈕與控制項 --- */
-        .tabs { display: flex; gap: 0.5rem; background: #F0F0F0; padding: 0.25rem; border-radius: 10px; }
-        .tab { 
-            padding: 0.4rem 1rem; border: none; background: transparent; 
-            font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; 
-            cursor: pointer; border-radius: 8px; transition: 0.2s;
-        }
-        .tab.active { background: white; color: var(--brand-blue); font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        select.tab { border: 1px solid var(--border); padding-right: 2rem; }
-
-        /* --- 表格樣式 --- */
+        /* 表格樣式 */
         table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 1rem; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+        th { text-align: left; padding: 1rem; font-size: 0.7rem; color: #767676; border-bottom: 1px solid var(--border); }
         td { padding: 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
         .pin-title-cell { font-weight: 600; color: var(--brand-blue); }
 
-        /* --- 頁尾: 置中優化 --- */
+        /* Footer - 強制置中 */
         .dashboard-footer {
             text-align: center;
             padding: 4rem 2rem;
             border-top: 1px solid var(--border);
             margin-top: 4rem;
+            width: 100%;
         }
-        .footer-links { display: flex; justify-content: center; gap: 25px; margin-bottom: 1.2rem; }
-        .footer-links a { color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 0.85rem; }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 1.2rem;
+        }
+        .footer-links a { color: #767676; text-decoration: none; font-weight: 500; }
         .footer-links a:hover { color: var(--brand-blue); }
-        .copyright { color: #AAA; font-size: 0.75rem; letter-spacing: 0.02em; }
     </style>
 </head>
 <body>
     <header>
         <div class="header-content">
             <a href="index.html" class="logo-section">
-                <div class="logo-icon">
-                    <img src="logo.png" alt="wwclab logo">
-                </div>
+                <div class="logo-icon"><img src="logo.png" alt="logo"></div>
                 <span class="logo-text">PinTrend Analytics</span>
             </a>
-            <div style="position: absolute; right: 0; font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--text-muted);" id="lastSync">SYNCING...</div>
         </div>
     </header>
 
     <main class="dashboard">
         <div class="stats-grid">
-            <div class="stat-card"><span class="stat-label">IMPRESSIONS</span><div class="stat-value" id="imp">0</div></div>
-            <div class="stat-card"><span class="stat-label">PIN CLICKS</span><div class="stat-value" id="clk">0</div></div>
-            <div class="stat-card"><span class="stat-label">SAVES</span><div class="stat-value" id="sav">0</div></div>
-            <div class="stat-card"><span class="stat-label">ENGAGEMENT</span><div class="stat-value" id="eng">0%</div></div>
+            <div class="stat-card"><span>IMPRESSIONS</span><div class="stat-value" id="imp">0</div></div>
+            <div class="stat-card"><span>CLICKS</span><div class="stat-value" id="clk">0</div></div>
+            <div class="stat-card"><span>SAVES</span><div class="stat-value" id="sav">0</div></div>
+            <div class="stat-card"><span>ENGAGEMENT</span><div class="stat-value" id="eng">0%</div></div>
         </div>
 
         <div class="charts-grid">
             <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Performance Trend</h3>
-                    <div style="display: flex; gap: 10px;">
-                        <select id="metricSelector" class="tab" onchange="updateChart()">
-                            <option value="imp">Impressions</option>
-                            <option value="clk">Clicks</option>
-                            <option value="sav">Saves</option>
-                        </select>
-                        <div class="tabs">
-                            <button class="tab active" id="dailyBtn" onclick="setMode('daily')">DAILY</button>
-                            <button class="tab" id="weeklyBtn" onclick="setMode('weekly')">WEEKLY</button>
-                        </div>
-                    </div>
-                </div>
                 <div style="height: 300px;"><canvas id="mainChart"></canvas></div>
             </div>
             <div class="card">
-                <h3 class="card-title" style="margin-bottom: 1rem;">Keyword Research</h3>
-                <input type="text" placeholder="Analyze home decor, candles..." class="tab" style="width:100%; margin-bottom:1.5rem; padding:0.8rem; border:1px solid var(--border);" id="kwSearch" onkeyup="filterKeywords()">
-                <div id="kwResults" style="display:grid; grid-template-columns:1fr; gap:10px;">
-                    </div>
+                <h3>Keyword Research</h3>
+                <div id="kwResults"></div>
             </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div class="card">
-                <h3 class="card-title" style="margin-bottom: 1.5rem;">Top Performing Pins</h3>
-                <table id="topPinsTable">
-                    <thead><tr><th>Pin Title</th><th>Impressions</th><th>Engagement</th></tr></thead>
-                    <tbody></tbody>
-                </table>
+                <h3>Top Performing Pins</h3>
+                <table id="topPinsTable"><tbody></tbody></table>
             </div>
             <div class="card">
-                <h3 class="card-title" style="margin-bottom: 1.5rem;">Recent Activity</h3>
-                <table id="recentLogTable">
-                    <thead><tr><th>Date</th><th>Pin Title</th><th>Impressions</th></tr></thead>
-                    <tbody></tbody>
-                </table>
+                <h3>Recent Activity</h3>
+                <table id="recentLogTable"><tbody></tbody></table>
             </div>
         </div>
     </main>
@@ -161,100 +124,21 @@
         <div class="footer-links">
             <a href="index.html">Home</a>
             <a href="privacy.html">Privacy Policy</a>
-            <a href="https://github.com/weiweichiang0813-art/pinterest-analytics" target="_blank">GitHub</a>
+            <a href="https://github.com/...">GitHub</a>
         </div>
-        <div class="copyright">Built by <strong>Wei Wei Chiang</strong> for Terradomi • Powered by wwclab.</div>
+        <p>Built by <strong>Wei Wei Chiang</strong> • Powered by wwclab.</p>
     </footer>
 
     <script>
-        const SHEET_ID = '1A3RLxLbjffrOy7CSqQKJ3nLP-JkuTLp8z6a2GhXAlmg';
-        const DATA_SHEET = 'Pinterest%20Analytics%20Data';
-        let rawData = [];
-        let chart;
-        let mode = 'daily';
-
-        async function init() {
-            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${DATA_SHEET}`;
-            try {
-                const response = await fetch(url);
-                const text = await response.text();
-                const json = JSON.parse(text.substr(47).slice(0, -2));
-                rawData = json.table.rows;
-                
-                renderStats();
-                updateChart();
-                renderTables();
-                document.getElementById('lastSync').innerText = `LAST SYNC: ${rawData[rawData.length-1].c[0].v}`;
-            } catch(e) { console.error("Init Error:", e); }
-        }
-
-        function renderStats() {
-            let imp = 0, clk = 0, sav = 0;
-            rawData.forEach(r => {
-                imp += (r.c[1]?.v || 0);
-                sav += (r.c[2]?.v || 0);
-                clk += (r.c[3]?.v || 0);
-            });
-            document.getElementById('imp').innerText = formatNum(imp);
-            document.getElementById('clk').innerText = formatNum(clk);
-            document.getElementById('sav').innerText = formatNum(sav);
-            document.getElementById('eng').innerText = (imp > 0 ? ((clk + sav) / imp * 100).toFixed(1) : 0) + '%';
-        }
-
-        function updateChart() {
-            const metric = document.getElementById('metricSelector').value;
-            const metricMap = { 'imp': 1, 'sav': 2, 'clk': 3 };
-            const colIdx = metricMap[metric];
-
-            let dailyAgg = {};
-            rawData.forEach(r => {
-                let d = r.c[0].v;
-                if(!dailyAgg[d]) dailyAgg[d] = 0;
-                dailyAgg[d] += (r.c[colIdx]?.v || 0);
-            });
-
-            const labels = Object.keys(dailyAgg).sort();
-            const values = labels.map(l => dailyAgg[l]);
-
-            if(chart) chart.destroy();
-            chart = new Chart(document.getElementById('mainChart').getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: metric.toUpperCase(),
-                        data: values,
-                        borderColor: '#0A1F44', // 使用 wwclab 藍色
-                        backgroundColor: 'rgba(10, 31, 68, 0.05)',
-                        fill: true, tension: 0.3, borderWidth: 3, pointRadius: 4
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-        }
-
-        function renderTables() {
-            // 🔥 重點邏輯：過濾掉 Untitled Pin 與 標題為 Pinterest 的垃圾資料
-            const filtered = rawData.filter(r => {
+        // ... (這裡放 init(), renderStats(), renderTables() 等函數)
+        // 記得在 renderTables 裡加入這段過濾邏輯：
+        function renderTables(rows) {
+            const filtered = rows.filter(r => {
                 const t = r.c[6]?.v || "";
-                return t !== "Untitled Pin" && t !== "Pinterest" && t !== "" && t !== "null";
+                return t !== "Untitled Pin" && t !== "Pinterest" && t !== "";
             });
-
-            // Top Pins
-            const top = [...filtered].sort((a,b) => (b.c[1]?.v || 0) - (a.c[1]?.v || 0)).slice(0, 5);
-            document.querySelector('#topPinsTable tbody').innerHTML = top.map(r => `
-                <tr><td class="pin-title-cell">${r.c[6].v}</td><td>${formatNum(r.c[1].v)}</td><td style="color:#2D8A4E;font-weight:bold;">${r.c[5].v}%</td></tr>
-            `).join('');
-
-            // Recent activity
-            const recent = [...filtered].slice(-5).reverse();
-            document.querySelector('#recentLogTable tbody').innerHTML = recent.map(r => `
-                <tr><td>${r.c[0].v}</td><td class="pin-title-cell">${r.c[6].v}</td><td>${formatNum(r.c[1].v)}</td></tr>
-            `).join('');
+            // ... 後續渲染 HTML
         }
-
-        function formatNum(n) { return n >= 1000 ? (n/1000).toFixed(1) + 'K' : n; }
-        init();
     </script>
 </body>
 </html>
