@@ -74,9 +74,13 @@ pin_title: Validated title (Filtered for accuracy)
 ```
 
 ## 👨‍💻 Developer Information
+
 Built by: Wei Wei Chiang
+
 Brand: wwclab.
+
 GitHub: weiweichiang0813-art
+
 Portfolio: View My Work
 
 
