@@ -74,16 +74,11 @@ pin_title: Validated title (Filtered for accuracy)
 ```
 
 ## 👨‍💻 Developer Information
-
-```bash
 Built by: Wei Wei Chiang
-
 Brand: wwclab.
-
 GitHub: weiweichiang0813-art
-
 Portfolio: View My Work
-```
+
 
 ## 📝 Note for API Reviewers
 The authorized Redirect URI for the Pinterest App (ID: 1552254) is:
