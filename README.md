@@ -84,7 +84,5 @@ GitHub: weiweichiang0813-art
 Portfolio: View My Work
 
 
-## 📝 Note for API Reviewers
-The authorized Redirect URI for the Pinterest App (ID: 1552254) is:
-
-https://www.google.com/search?q=https://weiweichiang0813-art.github.io/pinterest-analytics/dashboard.html
+## 📝 Site Display
+https://weiweichiang0813-art.github.io/pinterest-analytics/
