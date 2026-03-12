@@ -3,51 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PinTrend Analytics | wwclab. Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>PinTrend Dashboard | wwclab.</title>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --brand-blue: #0A1F44; --bg: #FFFFFF; }
+        :root { --brand-blue: #0A1F44; --border: #E2E8F0; --text-muted: #767676; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--brand-blue); height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .hero { text-align: center; max-width: 600px; padding: 2rem; animation: fadeIn 1s ease-out; }
+        body { font-family: 'Manrope', sans-serif; background: #FAFBFC; color: #111; }
         
-        /* 圓形 Logo 容器 */
-        .logo-container { 
-            width: 120px; height: 120px; margin: 0 auto 2.5rem; 
-            border-radius: 50%; overflow: hidden; 
-            border: 2px solid var(--brand-blue); 
-            box-shadow: 0 10px 30px rgba(10, 31, 68, 0.12);
-            background: #fff;
-        }
-        .logo-container img { width: 100%; height: 100%; object-fit: cover; }
+        header { background: #fff; border-bottom: 1px solid var(--border); padding: 1rem 2rem; position: sticky; top: 0; z-index: 100; }
+        .header-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: center; align-items: center; }
+        .logo-icon { width: 35px; height: 35px; border-radius: 50%; overflow: hidden; border: 1.5px solid var(--brand-blue); margin-right: 12px; }
+        .logo-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .logo-text { font-family: 'Instrument Serif', serif; font-size: 1.4rem; font-weight: bold; }
+        
+        .dashboard { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: #fff; border-radius: 20px; padding: 1.5rem; border: 1px solid var(--border); transition: 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); border-color: var(--brand-blue); }
+        .stat-card p { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .stat-value { font-family: 'Instrument Serif', serif; font-size: 2.5rem; color: var(--brand-blue); }
+        
+        .card { background: #fff; border-radius: 24px; padding: 1.5rem; border: 1px solid var(--border); margin-bottom: 1.5rem; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .tab-select { padding: 0.5rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.8rem; font-family: 'Manrope'; }
 
-        h1 { font-family: 'Instrument Serif', serif; font-size: 3.5rem; line-height: 1.1; margin-bottom: 1.5rem; color: #111; }
-        h1 em { font-style: italic; color: var(--brand-blue); }
-        p { font-size: 1.1rem; color: #666; margin-bottom: 2.5rem; font-weight: 300; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 1rem; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+        td { padding: 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        .pin-title { font-weight: 600; color: var(--brand-blue); }
 
-        .btn-portal {
-            display: inline-flex; align-items: center; gap: 12px;
-            background: var(--brand-blue); color: white; text-decoration: none;
-            padding: 18px 45px; border-radius: 100px; font-weight: 600; font-size: 1.1rem;
-            box-shadow: 0 10px 25px rgba(10, 31, 68, 0.2); transition: 0.3s; border: none; cursor: pointer;
-        }
-        .btn-portal:hover { background: #061530; transform: translateY(-3px); }
-
-        .footer-links { position: absolute; bottom: 40px; font-size: 0.8rem; color: #AAA; }
-        .footer-links a { color: #AAA; text-decoration: none; margin: 0 10px; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .dashboard-footer { text-align: center; padding: 4rem 2rem; border-top: 1px solid var(--border); margin-top: 3rem; }
+        .footer-links { display: flex; justify-content: center; gap: 30px; margin-bottom: 1rem; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; }
+        .footer-links a:hover { color: var(--brand-blue); }
+        .copyright { color: #AAA; font-size: 0.8rem; margin-top: 0.5rem; }
     </style>
 </head>
 <body>
-    <div class="hero">
-        <div class="logo-container"><img src="logo.png" alt="wwclab. logo"></div>
-        <h1>Unlock Your <em>Pinterest</em> Potential</h1>
-        <p>Professional creator insights and performance tracking powered by wwclab.</p>
-        <button class="btn-portal" onclick="window.location.href='dashboard.html'">
-            Analyze with PinTrend
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-        </button>
-    </div>
-    <div class="footer-links"><a href="privacy.html">Privacy Policy</a> • <span>© 2026 wwclab. Analytics</span></div>
+    <header>
+        <div class="header-content">
+            <div class="logo-icon"><img src="logo.png" alt="logo"></div>
+            <div class="logo-text">PinTrend Analytics</div>
+        </div>
+    </header>
+
+    <main class="dashboard">
+        <div class="stats-grid">
+            <div class="stat-card"><p>TOTAL IMPRESSIONS</p><div class="stat-value" id="imp">0</div></div>
+            <div class="stat-card"><p>TOTAL CLICKS</p><div class="stat-value" id="clk">0</div></div>
+            <div class="stat-card"><p>TOTAL SAVES</p><div class="stat-value" id="sav">0</div></div>
+            <div class="stat-card"><p>ENGAGEMENT RATE</p><div class="stat-value" id="eng">0%</div></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 style="font-family:'Instrument Serif'; font-size:1.6rem;">Performance Trend</h3>
+                <select id="metricSelector" class="tab-select" onchange="updateChart()">
+                    <option value="1">Impressions</option>
+                    <option value="3">Clicks</option>
+                    <option value="2">Saves</option>
+                </select>
+            </div>
+            <div style="height: 350px;"><canvas id="mainChart"></canvas></div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem;">
+            <div class="card">
+                <h3 style="font-family:'Instrument Serif'; font-size:1.4rem; margin-bottom:1rem;">Top Performing Pins</h3>
+                <table id="topTable"><thead><tr><th>Pin Title</th><th>Impressions</th></tr></thead><tbody></tbody></table>
+            </div>
+            <div class="card">
+                <h3 style="font-family:'Instrument Serif'; font-size:1.4rem; margin-bottom:1rem;">Recent Activity Log</h3>
+                <table id="recentTable"><thead><tr><th>Date</th><th>Pin Title</th></tr></thead><tbody></tbody></table>
+            </div>
+        </div>
+    </main>
+
+    <footer class="dashboard-footer">
+        <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="https://github.com/weiweichiang0813-art/pinterest-analytics" target="_blank">GitHub Source</a>
+        </div>
+        <div class="copyright">Built by <strong>Wei Wei Chiang</strong> for Terradomi • Powered by wwclab.</div>
+    </footer>
+
+    <script>
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1A3RLxLbjffrOy7CSqQKJ3nLP-JkuTLp8z6a2GhXAlmg/gviz/tq?tqx=out:json';
+        let chart;
+        let globalData = [];
+
+        async function init() {
+            try {
+                const res = await fetch(SHEET_URL);
+                const text = await res.text();
+                const json = JSON.parse(text.substr(47).slice(0, -2));
+                globalData = json.table.rows;
+
+                // 🔥 過濾掉 Untitled Pin 與 Pinterest 垃圾資料
+                const filtered = globalData.filter(r => {
+                    const t = r.c[6]?.v || "";
+                    return t !== "Untitled Pin" && t !== "Pinterest" && t !== "" && t !== "null";
+                });
+
+                renderStats(globalData);
+                renderTables(filtered);
+                updateChart();
+            } catch (e) { console.error("Data Load Error:", e); }
+        }
+
+        function renderStats(data) {
+            let i = 0, s = 0, c = 0;
+            data.forEach(r => {
+                i += (r.c[1]?.v || 0);
+                s += (r.c[2]?.v || 0);
+                c += (r.c[3]?.v || 0);
+            });
+            document.getElementById('imp').innerText = i.toLocaleString();
+            document.getElementById('clk').innerText = c.toLocaleString();
+            document.getElementById('sav').innerText = s.toLocaleString();
+            document.getElementById('eng').innerText = (i > 0 ? ((c + s) / i * 100).toFixed(1) : 0) + '%';
+        }
+
+        function renderTables(rows) {
+            const sorted = [...rows].sort((a,b) => (b.c[1]?.v || 0) - (a.c[1]?.v || 0)).slice(0, 5);
+            document.querySelector('#topTable tbody').innerHTML = sorted.map(r => `
+                <tr><td class="pin-title">${r.c[6].v}</td><td>${(r.c[1].v).toLocaleString()}</td></tr>
+            `).join('');
+
+            const recent = [...rows].slice(-5).reverse();
+            document.querySelector('#recentTable tbody').innerHTML = recent.map(r => `
+                <tr><td>${r.c[0].v}</td><td class="pin-title">${r.c[6].v}</td></tr>
+            `).join('');
+        }
+
+        function updateChart() {
+            const col = parseInt(document.getElementById('metricSelector').value);
+            const dateMap = {};
+            
+            globalData.forEach(r => {
+                const date = r.c[0].v;
+                const val = r.c[col]?.v || 0;
+                dateMap[date] = (dateMap[date] || 0) + val;
+            });
+
+            const labels = Object.keys(dateMap).sort();
+            const values = labels.map(l => dateMap[l]);
+
+            if(chart) chart.destroy();
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Performance',
+                        data: values,
+                        borderColor: '#0A1F44',
+                        backgroundColor: 'rgba(10, 31, 68, 0.05)',
+                        fill: true, tension: 0.4, borderWidth: 3, pointRadius: 4
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        init();
+    </script>
 </body>
 </html>
