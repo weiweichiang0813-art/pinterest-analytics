@@ -2,31 +2,231 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy | PinTrend Analytics</title>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Manrope', sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 40px 20px; background: #FAFBFC; }
-        .card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid #EEE; }
-        h1 { color: #E60023; border-bottom: 2px solid #E60023; padding-bottom: 10px; }
-        .back-btn { display: inline-block; margin-bottom: 20px; color: #767676; text-decoration: none; font-size: 0.9rem; }
-        .back-btn:hover { color: #E60023; }
+        :root {
+            --bg: #F8FAFC;
+            --bg-card: #FFFFFF;
+            --text: #1E3A5F;
+            --text-muted: #64748B;
+            --text-subtle: #94A3B8;
+            --accent: #0EA5E9;
+            --border: #E2E8F0;
+            --border-light: #F1F5F9;
+            --shadow: rgba(14, 165, 233, 0.08);
+            --pin-red: #BD081C;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Background */
+        .bg-gradient { position: fixed; inset: 0; pointer-events: none; z-index: -1; overflow: hidden; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.3; }
+        .blob-1 { width: 400px; height: 400px; background: linear-gradient(135deg, rgba(189, 8, 28, 0.15), rgba(14, 165, 233, 0.1)); top: -150px; right: -100px; }
+
+        /* Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Back Button */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 2rem;
+            padding: 0.6rem 1.2rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .back-btn:hover {
+            border-color: var(--pin-red);
+            color: var(--pin-red);
+        }
+
+        /* Card */
+        .card {
+            background: var(--bg-card);
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: 0 8px 30px var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        /* Section Label */
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--pin-red);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .section-label::before {
+            content: '';
+            width: 20px;
+            height: 1px;
+            background: var(--pin-red);
+        }
+
+        /* Title */
+        h1 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(2rem, 5vw, 2.8rem);
+            font-weight: 400;
+            color: var(--text);
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--pin-red);
+        }
+        h1 em {
+            font-style: italic;
+            color: var(--pin-red);
+        }
+
+        /* Updated Date */
+        .updated {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-subtle);
+            margin-bottom: 2rem;
+        }
+
+        /* Content */
+        .content p {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .content h3 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.3rem;
+            font-weight: 400;
+            color: var(--text);
+            margin: 2rem 0 1rem;
+        }
+        .content h3 em {
+            font-style: italic;
+            color: var(--pin-red);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid var(--border-light);
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .footer-links a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: 0.3s;
+        }
+        .footer-links a:hover { color: var(--pin-red); }
+        .copyright {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-subtle);
+            font-size: 0.7rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 2rem 1.5rem; }
+            .card { padding: 2rem; }
+        }
     </style>
 </head>
 <body>
-    <a href="javascript:history.back()" class="back-btn">← Back to Dashboard</a>
-    <div class="card">
-        <h1>Privacy Policy</h1>
-        <p><strong>Last Updated: March 2026</strong></p>
-        <p>PinTrend Analytics Portal ("we", "our", or "the App") is committed to protecting your privacy. This policy explains how we handle data.</p>
-        
-        <h3>1. Data Collection</h3>
-        <p>We do not store or sell any personal user information. Our App only accesses Pinterest Analytics data (impressions, clicks, saves) through official API or authorized scrapers to provide visualization for creators.</p>
-        
-        <h3>2. Data Usage</h3>
-        <p>The data retrieved is used solely for generating the performance charts and keyword research results displayed on your dashboard. We do not share this data with third parties.</p>
-        
-        <h3>3. Security</h3>
-        <p>All data processing is handled securely. We encourage users to use official OAuth 2.0 authentication for the most secure experience.</p>
+    <div class="bg-gradient">
+        <div class="blob blob-1"></div>
+    </div>
+
+    <div class="container">
+        <a href="javascript:history.back()" class="back-btn">
+            ← Back to Dashboard
+        </a>
+
+        <div class="card">
+            <div class="section-label">Legal</div>
+            <h1>Privacy <em>Policy</em></h1>
+            <p class="updated">Last Updated: March 2026</p>
+
+            <div class="content">
+                <p>
+                    PinTrend Analytics ("we", "our", or "the App") is committed to protecting your privacy. 
+                    This policy explains how we handle data.
+                </p>
+
+                <h3>1. Data <em>Collection</em></h3>
+                <p>
+                    We do not store or sell any personal user information. Our App only accesses Pinterest Analytics data 
+                    (impressions, clicks, saves) through official API or authorized scrapers to provide visualization for creators.
+                </p>
+
+                <h3>2. Data <em>Usage</em></h3>
+                <p>
+                    The data retrieved is used solely for generating the performance charts and keyword research results 
+                    displayed on your dashboard. We do not share this data with third parties.
+                </p>
+
+                <h3>3. <em>Security</em></h3>
+                <p>
+                    All data processing is handled securely. We encourage users to use official OAuth 2.0 authentication 
+                    for the most secure experience.
+                </p>
+
+                <h3>4. <em>Contact</em></h3>
+                <p>
+                    If you have any questions about this Privacy Policy, please contact us through our 
+                    <a href="https://weiweichiang0813-art.github.io/portfolio/" style="color: var(--pin-red);">portfolio website</a>.
+                </p>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="https://weiweichiang0813-art.github.io/portfolio/" target="_blank">Portfolio</a>
+            </div>
+            <div class="copyright">© 2026 WINNIE CHIANG</div>
+        </footer>
     </div>
 </body>
 </html>
