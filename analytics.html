@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics | PinTrend Analytics Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #F8FAFC;
+            --bg-card: #FFFFFF;
+            --text: #1E3A5F;
+            --text-muted: #64748B;
+            --text-subtle: #94A3B8;
+            --border: #E2E8F0;
+            --border-light: #F1F5F9;
+            --shadow: rgba(14, 165, 233, 0.08);
+            --pin-red: #BD081C;
+            --pin-red-dim: rgba(189, 8, 28, 0.08);
+            --success: #10B981;
+            --warning: #F59E0B;
+            --info: #0EA5E9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .bg-gradient { position: fixed; inset: 0; pointer-events: none; z-index: -1; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4; }
+        .blob-1 { width: 500px; height: 500px; background: linear-gradient(135deg, rgba(189, 8, 28, 0.15), rgba(14, 165, 233, 0.1)); top: -200px; right: -100px; }
+
+        /* Navigation */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid var(--pin-red);
+        }
+        .logo-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .logo-text {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.4rem;
+            font-style: italic;
+            color: var(--pin-red);
+        }
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .nav-link {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            transition: 0.3s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover { color: var(--pin-red); background: var(--pin-red-dim); }
+        .nav-link.active { color: var(--pin-red); background: var(--pin-red-dim); border-color: var(--pin-red); }
+
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--pin-red);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .section-label::before {
+            content: '';
+            width: 20px;
+            height: 1px;
+            background: var(--pin-red);
+        }
+        .page-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            font-weight: 400;
+        }
+        .page-title em { font-style: italic; color: var(--pin-red); }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            transition: 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px var(--shadow);
+        }
+        .stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+        .stat-value {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2.2rem;
+            color: var(--pin-red);
+            line-height: 1;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 1.75rem;
+            border: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .card-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.4rem;
+            font-weight: 400;
+        }
+        .card-title em { font-style: italic; color: var(--pin-red); }
+
+        .tab-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            background: var(--bg);
+            cursor: pointer;
+        }
+
+        .chart-container { height: 350px; }
+
+        /* Two Column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        /* AI Insights */
+        .ai-insights {
+            background: linear-gradient(135deg, var(--pin-red-dim), rgba(14, 165, 233, 0.05));
+            border: 1px solid var(--pin-red);
+        }
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--pin-red);
+            background: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+        }
+        .ai-content {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+        .ai-content strong {
+            color: var(--text);
+        }
+        .ai-placeholder {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+        .ai-placeholder-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .ai-placeholder h4 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            background: var(--bg);
+        }
+        td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        tr:hover td { background: var(--pin-red-dim); }
+        .pin-title { font-weight: 600; color: var(--text); }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--border-light);
+            margin-top: 2rem;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+        .footer-links a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+        .footer-links a:hover { color: var(--pin-red); }
+        .copyright {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-subtle);
+            font-size: 0.7rem;
+        }
+
+        @media (max-width: 1024px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .two-col { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"><div class="blob blob-1"></div></div>
+
+    <nav>
+        <div class="nav-content">
+            <div class="logo-group">
+                <div class="logo-icon"><img src="logo.png" alt="logo"></div>
+                <div class="logo-text">PinTrend Analytics</div>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="analytics.html" class="nav-link active">Analytics</a>
+                <a href="audience.html" class="nav-link">Audience</a>
+                <a href="keywords.html" class="nav-link">Keywords</a>
+                <a href="creator.html" class="nav-link">Content Creator</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="page-header">
+            <div class="section-label">Detailed Analysis</div>
+            <h1 class="page-title">Analytics <em>Dashboard</em></h1>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Impressions</div>
+                <div class="stat-value" id="imp">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Clicks</div>
+                <div class="stat-value" id="clk">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Saves</div>
+                <div class="stat-value" id="sav">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Engagement Rate</div>
+                <div class="stat-value" id="eng">--%</div>
+            </div>
+        </div>
+
+        <div class="two-col">
+            <!-- Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Performance <em>Trend</em></h3>
+                    <select id="metricSelector" class="tab-select" onchange="updateChart()">
+                        <option value="1">Impressions</option>
+                        <option value="3">Clicks</option>
+                        <option value="2">Saves</option>
+                    </select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="mainChart"></canvas>
+                </div>
+            </div>
+
+            <!-- AI Insights -->
+            <div class="card ai-insights">
+                <div class="ai-badge">🤖 AI Insights</div>
+                <h3 class="card-title">Performance <em>Analysis</em></h3>
+                <div id="aiInsightsContent" class="ai-content">
+                    <div class="ai-placeholder">
+                        <div class="ai-placeholder-icon">🔮</div>
+                        <h4>AI Analysis Coming Soon</h4>
+                        <p>Connect Claude API to get personalized insights about your Pinterest performance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Chart -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Metrics <em>Comparison</em></h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="comparisonChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Top Pins Table -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Top <em>Performing</em> Pins</h3>
+            </div>
+            <table id="topTable">
+                <thead>
+                    <tr>
+                        <th>Pin Title</th>
+                        <th>Impressions</th>
+                        <th>Clicks</th>
+                        <th>Saves</th>
+                        <th>Engagement</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="https://github.com/weiweichiang0813-art/pinterest-analytics" target="_blank">GitHub</a>
+        </div>
+        <div class="copyright">© 2026 Winnie Chiang</div>
+    </footer>
+
+    <script>
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1A3RLxLbjffrOy7CSqQKJ3nLP-JkuTLp8z6a2GhXAlmg/gviz/tq?tqx=out:json';
+        let chart, compChart;
+        let globalData = [];
+
+        async function init() {
+            try {
+                const res = await fetch(SHEET_URL);
+                const text = await res.text();
+                const json = JSON.parse(text.substr(47).slice(0, -2));
+                globalData = json.table.rows;
+
+                renderStats();
+                renderTable();
+                updateChart();
+                renderComparisonChart();
+            } catch (e) { console.error(e); }
+        }
+
+        function renderStats() {
+            let i = 0, s = 0, c = 0;
+            globalData.forEach(r => {
+                i += (r.c[1]?.v || 0);
+                s += (r.c[2]?.v || 0);
+                c += (r.c[3]?.v || 0);
+            });
+            document.getElementById('imp').textContent = i.toLocaleString();
+            document.getElementById('clk').textContent = c.toLocaleString();
+            document.getElementById('sav').textContent = s.toLocaleString();
+            document.getElementById('eng').textContent = (i > 0 ? ((c + s) / i * 100).toFixed(1) : 0) + '%';
+        }
+
+        function renderTable() {
+            const filtered = globalData.filter(r => {
+                const t = r.c[6]?.v || "";
+                return t && t !== "Untitled Pin" && t !== "Pinterest";
+            });
+
+            const sorted = [...filtered].sort((a,b) => (b.c[1]?.v || 0) - (a.c[1]?.v || 0)).slice(0, 10);
+            
+            document.querySelector('#topTable tbody').innerHTML = sorted.map(r => {
+                const imp = r.c[1]?.v || 0;
+                const sav = r.c[2]?.v || 0;
+                const clk = r.c[3]?.v || 0;
+                const eng = imp > 0 ? ((clk + sav) / imp * 100).toFixed(1) : 0;
+                return `
+                    <tr>
+                        <td class="pin-title">${r.c[6]?.v || 'Untitled'}</td>
+                        <td>${imp.toLocaleString()}</td>
+                        <td>${clk.toLocaleString()}</td>
+                        <td>${sav.toLocaleString()}</td>
+                        <td>${eng}%</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateChart() {
+            const col = parseInt(document.getElementById('metricSelector').value);
+            const dateMap = {};
+            
+            globalData.forEach(r => {
+                const date = r.c[0]?.v;
+                if (!date) return;
+                dateMap[date] = (dateMap[date] || 0) + (r.c[col]?.v || 0);
+            });
+
+            const labels = Object.keys(dateMap).sort();
+            const values = labels.map(l => dateMap[l]);
+
+            if(chart) chart.destroy();
+            chart = new Chart(document.getElementById('mainChart'), {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Value',
+                        data: values,
+                        borderColor: '#BD081C',
+                        backgroundColor: 'rgba(189, 8, 28, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function renderComparisonChart() {
+            let totals = { imp: 0, clk: 0, sav: 0 };
+            globalData.forEach(r => {
+                totals.imp += (r.c[1]?.v || 0);
+                totals.sav += (r.c[2]?.v || 0);
+                totals.clk += (r.c[3]?.v || 0);
+            });
+
+            compChart = new Chart(document.getElementById('comparisonChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Impressions', 'Clicks', 'Saves'],
+                    datasets: [{
+                        data: [totals.imp, totals.clk, totals.sav],
+                        backgroundColor: ['rgba(189, 8, 28, 0.8)', 'rgba(14, 165, 233, 0.8)', 'rgba(16, 185, 129, 0.8)'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>

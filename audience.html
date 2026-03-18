@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audience | PinTrend Analytics Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #F8FAFC;
+            --bg-card: #FFFFFF;
+            --text: #1E3A5F;
+            --text-muted: #64748B;
+            --text-subtle: #94A3B8;
+            --border: #E2E8F0;
+            --border-light: #F1F5F9;
+            --pin-red: #BD081C;
+            --pin-red-dim: rgba(189, 8, 28, 0.08);
+            --success: #10B981;
+            --info: #0EA5E9;
+            --purple: #8B5CF6;
+            --orange: #F59E0B;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+        .bg-gradient { position: fixed; inset: 0; pointer-events: none; z-index: -1; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4; }
+        .blob-1 { width: 500px; height: 500px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(14, 165, 233, 0.1)); top: -200px; right: -100px; }
+
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo-group { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { width: 42px; height: 42px; border-radius: 50%; overflow: hidden; border: 2px solid var(--pin-red); }
+        .logo-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .logo-text { font-family: 'Instrument Serif', serif; font-size: 1.4rem; font-style: italic; color: var(--pin-red); }
+        .nav-links { display: flex; gap: 0.5rem; }
+        .nav-link {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            transition: 0.3s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover { color: var(--pin-red); background: var(--pin-red-dim); }
+        .nav-link.active { color: var(--pin-red); background: var(--pin-red-dim); border-color: var(--pin-red); }
+
+        main { max-width: 1400px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+        .page-header { margin-bottom: 2rem; }
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--purple);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .section-label::before { content: ''; width: 20px; height: 1px; background: var(--purple); }
+        .page-title { font-family: 'Instrument Serif', serif; font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 400; }
+        .page-title em { font-style: italic; color: var(--purple); }
+
+        /* Grid */
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 1.75rem;
+            border: 1px solid var(--border);
+        }
+        .card-header { margin-bottom: 1.5rem; }
+        .card-title { font-family: 'Instrument Serif', serif; font-size: 1.3rem; font-weight: 400; }
+        .card-title em { font-style: italic; color: var(--purple); }
+
+        .chart-container { height: 280px; }
+
+        /* Demographic Items */
+        .demo-list { display: flex; flex-direction: column; gap: 1rem; }
+        .demo-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .demo-bar-container {
+            flex: 1;
+            height: 12px;
+            background: var(--border-light);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .demo-bar {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 1s ease;
+        }
+        .demo-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            min-width: 80px;
+        }
+        .demo-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text);
+            min-width: 50px;
+            text-align: right;
+        }
+
+        /* Interest Tags */
+        .interest-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+        .interest-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            transition: 0.3s;
+        }
+        .interest-tag:hover {
+            border-color: var(--purple);
+            color: var(--purple);
+            background: rgba(139, 92, 246, 0.08);
+        }
+        .interest-tag.high {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: var(--purple);
+            color: var(--purple);
+        }
+
+        /* Best Time Grid */
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+        }
+        .time-header {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            text-align: center;
+            color: var(--text-muted);
+            padding: 0.5rem 0;
+        }
+        .time-cell {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            transition: 0.3s;
+        }
+        .time-cell.low { background: rgba(139, 92, 246, 0.1); }
+        .time-cell.medium { background: rgba(139, 92, 246, 0.3); color: white; }
+        .time-cell.high { background: rgba(139, 92, 246, 0.6); color: white; }
+        .time-cell.peak { background: var(--purple); color: white; font-weight: 600; }
+
+        /* Stats */
+        .audience-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+        .audience-stat {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .audience-stat-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .audience-stat-value {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.8rem;
+            color: var(--purple);
+        }
+        .audience-stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--border-light);
+            margin-top: 2rem;
+        }
+        .footer-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 1rem; }
+        .footer-links a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+        .footer-links a:hover { color: var(--pin-red); }
+        .copyright { font-family: 'JetBrains Mono', monospace; color: var(--text-subtle); font-size: 0.7rem; }
+
+        @media (max-width: 1024px) {
+            .grid-3, .audience-stats { grid-template-columns: 1fr 1fr; }
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .grid-3, .audience-stats { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"><div class="blob blob-1"></div></div>
+
+    <nav>
+        <div class="nav-content">
+            <div class="logo-group">
+                <div class="logo-icon"><img src="logo.png" alt="logo"></div>
+                <div class="logo-text">PinTrend Analytics</div>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="analytics.html" class="nav-link">Analytics</a>
+                <a href="audience.html" class="nav-link active">Audience</a>
+                <a href="keywords.html" class="nav-link">Keywords</a>
+                <a href="creator.html" class="nav-link">Content Creator</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="page-header">
+            <div class="section-label">Know Your Audience</div>
+            <h1 class="page-title">Audience <em>Insights</em></h1>
+        </div>
+
+        <!-- Audience Stats -->
+        <div class="audience-stats">
+            <div class="audience-stat">
+                <div class="audience-stat-icon">👥</div>
+                <div class="audience-stat-value">2.4K</div>
+                <div class="audience-stat-label">Monthly Viewers</div>
+            </div>
+            <div class="audience-stat">
+                <div class="audience-stat-icon">🌍</div>
+                <div class="audience-stat-value">12</div>
+                <div class="audience-stat-label">Countries</div>
+            </div>
+            <div class="audience-stat">
+                <div class="audience-stat-icon">💫</div>
+                <div class="audience-stat-value">78%</div>
+                <div class="audience-stat-label">Engaged Users</div>
+            </div>
+            <div class="audience-stat">
+                <div class="audience-stat-icon">📈</div>
+                <div class="audience-stat-value">+15%</div>
+                <div class="audience-stat-label">Growth Rate</div>
+            </div>
+        </div>
+
+        <div class="grid-3">
+            <!-- Gender -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Gender <em>Distribution</em></h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="genderChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Age -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Age <em>Groups</em></h3>
+                </div>
+                <div class="demo-list">
+                    <div class="demo-item">
+                        <span class="demo-label">18-24</span>
+                        <div class="demo-bar-container">
+                            <div class="demo-bar" style="width: 25%; background: var(--purple);"></div>
+                        </div>
+                        <span class="demo-value">25%</span>
+                    </div>
+                    <div class="demo-item">
+                        <span class="demo-label">25-34</span>
+                        <div class="demo-bar-container">
+                            <div class="demo-bar" style="width: 40%; background: var(--purple);"></div>
+                        </div>
+                        <span class="demo-value">40%</span>
+                    </div>
+                    <div class="demo-item">
+                        <span class="demo-label">35-44</span>
+                        <div class="demo-bar-container">
+                            <div class="demo-bar" style="width: 20%; background: var(--info);"></div>
+                        </div>
+                        <span class="demo-value">20%</span>
+                    </div>
+                    <div class="demo-item">
+                        <span class="demo-label">45-54</span>
+                        <div class="demo-bar-container">
+                            <div class="demo-bar" style="width: 10%; background: var(--success);"></div>
+                        </div>
+                        <span class="demo-value">10%</span>
+                    </div>
+                    <div class="demo-item">
+                        <span class="demo-label">55+</span>
+                        <div class="demo-bar-container">
+                            <div class="demo-bar" style="width: 5%; background: var(--orange);"></div>
+                        </div>
+                        <span class="demo-value">5%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Top <em>Locations</em></h3>
+                </div>
+                <div class="demo-list">
+                    <div class="demo-item">
+                        <span class="demo-label">🇺🇸 USA</span>
+                        <div class="demo-bar-container">
+                            <div class="demo-bar" style="width: 45%; background: var(--pin-red);"></div>
+                        </div>
+                        <span class="demo-value">45%</span>
+                    </div>
+                    <div class="demo-item">
+                        <span class="demo-label">🇨🇦 Canada</span>
+                        <div class="demo-bar-container">
+                            <div class="demo-bar" style="width: 20%; background: var(--pin-red);"></div>
+                        </div>
+                        <span class="demo-value">20%</span>
+                    </div>
+                    <div class="demo-item">
+                        <span class="demo-label">🇬🇧 UK</span>
+                        <div class="demo-bar-container">
+                            <div class="demo-bar" style="width: 15%; background: var(--info);"></div>
+                        </div>
+                        <span class="demo-value">15%</span>
+                    </div>
+                    <div class="demo-item">
+                        <span class="demo-label">🇦🇺 Australia</span>
+                        <div class="demo-bar-container">
+                            <div class="demo-bar" style="width: 10%; background: var(--success);"></div>
+                        </div>
+                        <span class="demo-value">10%</span>
+                    </div>
+                    <div class="demo-item">
+                        <span class="demo-label">🌏 Other</span>
+                        <div class="demo-bar-container">
+                            <div class="demo-bar" style="width: 10%; background: var(--text-subtle);"></div>
+                        </div>
+                        <span class="demo-value">10%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <!-- Interests -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Audience <em>Interests</em></h3>
+                </div>
+                <div class="interest-grid">
+                    <span class="interest-tag high">Home Decor</span>
+                    <span class="interest-tag high">DIY & Crafts</span>
+                    <span class="interest-tag high">Candles</span>
+                    <span class="interest-tag">Aromatherapy</span>
+                    <span class="interest-tag">Gift Ideas</span>
+                    <span class="interest-tag">Minimalist Living</span>
+                    <span class="interest-tag">Self Care</span>
+                    <span class="interest-tag">Cozy Home</span>
+                    <span class="interest-tag">Interior Design</span>
+                    <span class="interest-tag">Wellness</span>
+                    <span class="interest-tag">Handmade</span>
+                    <span class="interest-tag">Small Business</span>
+                </div>
+            </div>
+
+            <!-- Best Posting Times -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Best <em>Posting Times</em></h3>
+                </div>
+                <div class="time-grid">
+                    <div class="time-header">Mon</div>
+                    <div class="time-header">Tue</div>
+                    <div class="time-header">Wed</div>
+                    <div class="time-header">Thu</div>
+                    <div class="time-header">Fri</div>
+                    <div class="time-header">Sat</div>
+                    <div class="time-header">Sun</div>
+                    
+                    <!-- Morning 8-10am -->
+                    <div class="time-cell medium">8am</div>
+                    <div class="time-cell high">8am</div>
+                    <div class="time-cell medium">8am</div>
+                    <div class="time-cell high">8am</div>
+                    <div class="time-cell medium">8am</div>
+                    <div class="time-cell peak">8am</div>
+                    <div class="time-cell peak">8am</div>
+                    
+                    <!-- Noon -->
+                    <div class="time-cell low">12pm</div>
+                    <div class="time-cell medium">12pm</div>
+                    <div class="time-cell medium">12pm</div>
+                    <div class="time-cell medium">12pm</div>
+                    <div class="time-cell high">12pm</div>
+                    <div class="time-cell high">12pm</div>
+                    <div class="time-cell high">12pm</div>
+                    
+                    <!-- Evening 8-10pm -->
+                    <div class="time-cell high">8pm</div>
+                    <div class="time-cell peak">8pm</div>
+                    <div class="time-cell high">8pm</div>
+                    <div class="time-cell peak">8pm</div>
+                    <div class="time-cell high">8pm</div>
+                    <div class="time-cell medium">8pm</div>
+                    <div class="time-cell high">8pm</div>
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-muted);">
+                    <strong>Peak times:</strong> Tuesday & Thursday 8PM, Weekend mornings
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="https://github.com/weiweichiang0813-art/pinterest-analytics" target="_blank">GitHub</a>
+        </div>
+        <div class="copyright">© 2026 Winnie Chiang</div>
+    </footer>
+
+    <script>
+        // Gender Chart
+        new Chart(document.getElementById('genderChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Female', 'Male', 'Other'],
+                datasets: [{
+                    data: [72, 25, 3],
+                    backgroundColor: ['#8B5CF6', '#0EA5E9', '#94A3B8'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: { family: 'JetBrains Mono', size: 11 },
+                            padding: 15
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

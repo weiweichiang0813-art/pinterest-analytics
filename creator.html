@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Creator | PinTrend Analytics Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #F8FAFC;
+            --bg-card: #FFFFFF;
+            --text: #1E3A5F;
+            --text-muted: #64748B;
+            --text-subtle: #94A3B8;
+            --border: #E2E8F0;
+            --border-light: #F1F5F9;
+            --pin-red: #BD081C;
+            --pin-red-dim: rgba(189, 8, 28, 0.08);
+            --success: #10B981;
+            --info: #0EA5E9;
+            --purple: #8B5CF6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+        .bg-gradient { position: fixed; inset: 0; pointer-events: none; z-index: -1; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4; }
+        .blob-1 { width: 500px; height: 500px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(14, 165, 233, 0.1)); top: -200px; right: -100px; }
+
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo-group { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { width: 42px; height: 42px; border-radius: 50%; overflow: hidden; border: 2px solid var(--pin-red); }
+        .logo-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .logo-text { font-family: 'Instrument Serif', serif; font-size: 1.4rem; font-style: italic; color: var(--pin-red); }
+        .nav-links { display: flex; gap: 0.5rem; }
+        .nav-link {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            text-transform: uppercase;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            transition: 0.3s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover { color: var(--pin-red); background: var(--pin-red-dim); }
+        .nav-link.active { color: var(--success); background: rgba(16, 185, 129, 0.1); border-color: var(--success); }
+
+        main { max-width: 1200px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+        .page-header { margin-bottom: 2rem; text-align: center; }
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--success);
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-transform: uppercase;
+        }
+        .section-label::before, .section-label::after { content: ''; width: 20px; height: 1px; background: var(--success); }
+        .page-title { font-family: 'Instrument Serif', serif; font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 400; }
+        .page-title em { font-style: italic; color: var(--success); }
+        .page-subtitle { color: var(--text-muted); margin-top: 0.5rem; }
+
+        /* Creator Layout */
+        .creator-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+        }
+        .card-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.3rem;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .card-title em { font-style: italic; color: var(--success); }
+        .card-title-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(16, 185, 129, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        /* Form */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.95rem;
+            transition: 0.3s;
+        }
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--success);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        .form-textarea { min-height: 120px; resize: vertical; }
+
+        .form-hint {
+            font-size: 0.75rem;
+            color: var(--text-subtle);
+            margin-top: 0.5rem;
+        }
+
+        /* Tone Selector */
+        .tone-options {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .tone-option {
+            padding: 0.6rem 1.2rem;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.3s;
+            background: var(--bg);
+        }
+        .tone-option:hover { border-color: var(--success); color: var(--success); }
+        .tone-option.active { border-color: var(--success); background: rgba(16, 185, 129, 0.1); color: var(--success); }
+
+        /* Generate Button */
+        .generate-btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .generate-btn:hover { background: #059669; transform: translateY(-2px); }
+        .generate-btn:disabled { background: var(--text-subtle); cursor: not-allowed; }
+
+        /* Output Card */
+        .output-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(14, 165, 233, 0.05));
+            border-color: var(--success);
+        }
+
+        .output-section { margin-bottom: 1.5rem; }
+        .output-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--success);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+        .output-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--text);
+            position: relative;
+        }
+        .output-content.title {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            padding: 0.4rem 0.8rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .copy-btn:hover { border-color: var(--success); color: var(--success); }
+
+        /* Hashtags */
+        .hashtags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .hashtag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 0.4rem 0.8rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 15px;
+            color: var(--success);
+            cursor: pointer;
+        }
+        .hashtag:hover { background: rgba(16, 185, 129, 0.2); }
+
+        /* AI Badge */
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--purple);
+            background: rgba(139, 92, 246, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+        }
+
+        /* Placeholder */
+        .ai-placeholder {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-muted);
+        }
+        .ai-placeholder-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .ai-placeholder h3 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.5rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+        .ai-placeholder p { max-width: 400px; margin: 0 auto; }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--border-light);
+            margin-top: 3rem;
+        }
+        .footer-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 1rem; }
+        .footer-links a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+        .footer-links a:hover { color: var(--pin-red); }
+        .copyright { font-family: 'JetBrains Mono', monospace; color: var(--text-subtle); font-size: 0.7rem; }
+
+        @media (max-width: 1024px) {
+            .creator-layout { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"><div class="blob blob-1"></div></div>
+
+    <nav>
+        <div class="nav-content">
+            <div class="logo-group">
+                <div class="logo-icon"><img src="logo.png" alt="logo"></div>
+                <div class="logo-text">PinTrend Analytics</div>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="analytics.html" class="nav-link">Analytics</a>
+                <a href="audience.html" class="nav-link">Audience</a>
+                <a href="keywords.html" class="nav-link">Keywords</a>
+                <a href="creator.html" class="nav-link active">Content Creator</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="page-header">
+            <div class="section-label">AI-Powered</div>
+            <h1 class="page-title">Content <em>Creator</em></h1>
+            <p class="page-subtitle">Generate optimized Pinterest Pin content with AI assistance</p>
+        </div>
+
+        <div class="creator-layout">
+            <!-- Input Form -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-title-icon">✍️</span>
+                    Create Your <em>Pin</em>
+                </h2>
+
+                <div class="form-group">
+                    <label class="form-label">Product/Concept</label>
+                    <input type="text" class="form-input" id="conceptInput" placeholder="e.g., Lavender soy candle for relaxation">
+                    <p class="form-hint">Describe your product or content idea</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Target Keywords</label>
+                    <input type="text" class="form-input" id="keywordsInput" placeholder="e.g., soy candle, aromatherapy, self care">
+                    <p class="form-hint">Separate with commas</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Additional Details (Optional)</label>
+                    <textarea class="form-textarea" id="detailsInput" placeholder="Add any specific features, benefits, or messaging you want to include..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tone</label>
+                    <div class="tone-options">
+                        <span class="tone-option active" onclick="selectTone(this)">Friendly</span>
+                        <span class="tone-option" onclick="selectTone(this)">Professional</span>
+                        <span class="tone-option" onclick="selectTone(this)">Playful</span>
+                        <span class="tone-option" onclick="selectTone(this)">Luxurious</span>
+                        <span class="tone-option" onclick="selectTone(this)">Minimalist</span>
+                    </div>
+                </div>
+
+                <button class="generate-btn" id="generateBtn" onclick="generateContent()">
+                    ✨ Generate Pin Content
+                </button>
+            </div>
+
+            <!-- Output -->
+            <div class="card output-card">
+                <div class="ai-badge">🤖 AI Generated</div>
+                <h2 class="card-title">
+                    <span class="card-title-icon">📌</span>
+                    Your <em>Pin</em> Content
+                </h2>
+
+                <div id="outputContainer">
+                    <div class="ai-placeholder">
+                        <div class="ai-placeholder-icon">🔮</div>
+                        <h3>AI Content Coming Soon</h3>
+                        <p>Connect your Claude API key to generate optimized Pinterest content with AI assistance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="https://github.com/weiweichiang0813-art/pinterest-analytics" target="_blank">GitHub</a>
+        </div>
+        <div class="copyright">© 2026 Winnie Chiang • Powered by Claude AI</div>
+    </footer>
+
+    <script>
+        function selectTone(el) {
+            document.querySelectorAll('.tone-option').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function generateContent() {
+            const concept = document.getElementById('conceptInput').value;
+            const keywords = document.getElementById('keywordsInput').value;
+            
+            if (!concept) {
+                alert('Please enter your product or concept');
+                return;
+            }
+
+            // For now, show a template-based output
+            // Will be replaced with AI when API is connected
+            const keywordList = keywords.split(',').map(k => k.trim()).filter(k => k);
+            const hashtags = keywordList.map(k => '#' + k.replace(/\s+/g, '')).join(' ');
+
+            const output = `
+                <div class="output-section">
+                    <div class="output-label">Pin Title</div>
+                    <div class="output-content title">
+                        ${concept} | Perfect for Self Care ✨
+                        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                    </div>
+                </div>
+
+                <div class="output-section">
+                    <div class="output-label">Description</div>
+                    <div class="output-content">
+                        🕯️ <strong>Looking for the perfect way to unwind?</strong><br><br>
+                        Discover our ${concept} - handcrafted with love and designed to transform your space into a peaceful sanctuary.<br><br>
+                        ✨ Hand-poured with natural ingredients<br>
+                        🌿 Clean-burning & eco-friendly<br>
+                        💝 Perfect gift for loved ones<br><br>
+                        Tap to shop now and bring cozy vibes to your home! 🏠<br><br>
+                        ${hashtags}
+                        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                    </div>
+                </div>
+
+                <div class="output-section">
+                    <div class="output-label">Suggested Hashtags</div>
+                    <div class="hashtags">
+                        ${keywordList.map(k => `<span class="hashtag" onclick="copyHashtag(this)">#${k.replace(/\s+/g, '')}</span>`).join('')}
+                        <span class="hashtag" onclick="copyHashtag(this)">#homedecor</span>
+                        <span class="hashtag" onclick="copyHashtag(this)">#cozyvibes</span>
+                        <span class="hashtag" onclick="copyHashtag(this)">#selfcare</span>
+                        <span class="hashtag" onclick="copyHashtag(this)">#giftideas</span>
+                    </div>
+                </div>
+
+                <p style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-subtle); text-align: center;">
+                    💡 Connect Claude API for more personalized, AI-generated content
+                </p>
+            `;
+
+            document.getElementById('outputContainer').innerHTML = output;
+        }
+
+        function copyText(btn) {
+            const text = btn.parentElement.innerText.replace('Copy', '').trim();
+            navigator.clipboard.writeText(text);
+            btn.textContent = 'Copied!';
+            setTimeout(() => btn.textContent = 'Copy', 2000);
+        }
+
+        function copyHashtag(el) {
+            navigator.clipboard.writeText(el.textContent);
+            el.style.background = 'rgba(16, 185, 129, 0.3)';
+            setTimeout(() => el.style.background = '', 500);
+        }
+    </script>
+</body>
+</html>

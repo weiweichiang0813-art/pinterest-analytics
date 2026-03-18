@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keywords | PinTrend Analytics Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #F8FAFC;
+            --bg-card: #FFFFFF;
+            --text: #1E3A5F;
+            --text-muted: #64748B;
+            --text-subtle: #94A3B8;
+            --border: #E2E8F0;
+            --border-light: #F1F5F9;
+            --pin-red: #BD081C;
+            --pin-red-dim: rgba(189, 8, 28, 0.08);
+            --success: #10B981;
+            --info: #0EA5E9;
+            --orange: #F59E0B;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+        .bg-gradient { position: fixed; inset: 0; pointer-events: none; z-index: -1; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4; }
+        .blob-1 { width: 500px; height: 500px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(14, 165, 233, 0.1)); top: -200px; right: -100px; }
+
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo-group { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { width: 42px; height: 42px; border-radius: 50%; overflow: hidden; border: 2px solid var(--pin-red); }
+        .logo-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .logo-text { font-family: 'Instrument Serif', serif; font-size: 1.4rem; font-style: italic; color: var(--pin-red); }
+        .nav-links { display: flex; gap: 0.5rem; }
+        .nav-link {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            text-transform: uppercase;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            transition: 0.3s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover { color: var(--pin-red); background: var(--pin-red-dim); }
+        .nav-link.active { color: var(--orange); background: rgba(245, 158, 11, 0.1); border-color: var(--orange); }
+
+        main { max-width: 1400px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+        .page-header { margin-bottom: 2rem; }
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--orange);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-transform: uppercase;
+        }
+        .section-label::before { content: ''; width: 20px; height: 1px; background: var(--orange); }
+        .page-title { font-family: 'Instrument Serif', serif; font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 400; }
+        .page-title em { font-style: italic; color: var(--orange); }
+
+        /* Search */
+        .search-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+        .search-box {
+            display: flex;
+            gap: 1rem;
+        }
+        .search-input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Manrope', sans-serif;
+            transition: 0.3s;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--orange);
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+        }
+        .search-btn {
+            padding: 1rem 2rem;
+            background: var(--orange);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .search-btn:hover { background: #D97706; transform: translateY(-2px); }
+
+        .quick-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .quick-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 0.4rem 0.8rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .quick-tag:hover {
+            border-color: var(--orange);
+            color: var(--orange);
+            background: rgba(245, 158, 11, 0.08);
+        }
+
+        /* Results */
+        .results-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 1.75rem;
+            border: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+        .card-header { margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        .card-title { font-family: 'Instrument Serif', serif; font-size: 1.3rem; font-weight: 400; }
+        .card-title em { font-style: italic; color: var(--orange); }
+
+        /* Keyword Results */
+        .keyword-results { display: flex; flex-direction: column; gap: 0.75rem; }
+        .keyword-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            background: var(--bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .keyword-item:hover {
+            border-color: var(--orange);
+            transform: translateX(5px);
+        }
+        .keyword-info { display: flex; align-items: center; gap: 1rem; }
+        .keyword-rank {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-subtle);
+            width: 24px;
+        }
+        .keyword-text { font-weight: 500; color: var(--text); }
+        .keyword-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .keyword-volume {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .keyword-trend {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 12px;
+        }
+        .keyword-trend.up { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .keyword-trend.hot { background: rgba(245, 158, 11, 0.1); color: var(--orange); }
+        .keyword-trend.stable { background: var(--border-light); color: var(--text-muted); }
+
+        /* Trending Section */
+        .trending-list { display: flex; flex-direction: column; gap: 0.75rem; }
+        .trending-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 10px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .trending-item:hover { background: rgba(245, 158, 11, 0.08); }
+        .trending-icon { font-size: 1.25rem; }
+        .trending-text { font-size: 0.9rem; color: var(--text); flex: 1; }
+        .trending-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            padding: 0.2rem 0.5rem;
+            background: var(--orange);
+            color: white;
+            border-radius: 10px;
+        }
+
+        /* Niche Ideas */
+        .niche-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+        .niche-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 0.6rem 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .niche-tag:hover {
+            border-color: var(--orange);
+            color: var(--orange);
+        }
+        .niche-tag.featured {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: var(--orange);
+            color: var(--orange);
+        }
+        .niche-tag.featured::before { content: '🔥 '; }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--border-light);
+            margin-top: 2rem;
+        }
+        .footer-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 1rem; }
+        .footer-links a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+        .footer-links a:hover { color: var(--pin-red); }
+        .copyright { font-family: 'JetBrains Mono', monospace; color: var(--text-subtle); font-size: 0.7rem; }
+
+        @media (max-width: 1024px) {
+            .results-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .search-box { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"><div class="blob blob-1"></div></div>
+
+    <nav>
+        <div class="nav-content">
+            <div class="logo-group">
+                <div class="logo-icon"><img src="logo.png" alt="logo"></div>
+                <div class="logo-text">PinTrend Analytics</div>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="analytics.html" class="nav-link">Analytics</a>
+                <a href="audience.html" class="nav-link">Audience</a>
+                <a href="keywords.html" class="nav-link active">Keywords</a>
+                <a href="creator.html" class="nav-link">Content Creator</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="page-header">
+            <div class="section-label">Discover Trends</div>
+            <h1 class="page-title">Keyword <em>Research</em></h1>
+        </div>
+
+        <!-- Search -->
+        <div class="search-card">
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search for keywords (e.g., candle, home decor, gift ideas...)">
+                <button class="search-btn" onclick="searchKeywords()">
+                    🔍 Search Keywords
+                </button>
+            </div>
+            <div class="quick-tags">
+                <span class="quick-tag" onclick="quickSearch('candle')">candle</span>
+                <span class="quick-tag" onclick="quickSearch('home decor')">home decor</span>
+                <span class="quick-tag" onclick="quickSearch('gift ideas')">gift ideas</span>
+                <span class="quick-tag" onclick="quickSearch('DIY')">DIY</span>
+                <span class="quick-tag" onclick="quickSearch('aesthetic')">aesthetic</span>
+                <span class="quick-tag" onclick="quickSearch('minimalist')">minimalist</span>
+            </div>
+        </div>
+
+        <div class="results-grid">
+            <!-- Keyword Results -->
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Keyword <em>Suggestions</em></h3>
+                    </div>
+                    <div class="keyword-results" id="keywordResults">
+                        <div class="keyword-item">
+                            <div class="keyword-info">
+                                <span class="keyword-rank">#1</span>
+                                <span class="keyword-text">soy candle aesthetic</span>
+                            </div>
+                            <div class="keyword-meta">
+                                <span class="keyword-volume">12K searches</span>
+                                <span class="keyword-trend hot">🔥 Hot</span>
+                            </div>
+                        </div>
+                        <div class="keyword-item">
+                            <div class="keyword-info">
+                                <span class="keyword-rank">#2</span>
+                                <span class="keyword-text">homemade candle DIY</span>
+                            </div>
+                            <div class="keyword-meta">
+                                <span class="keyword-volume">8.5K searches</span>
+                                <span class="keyword-trend up">↑ +23%</span>
+                            </div>
+                        </div>
+                        <div class="keyword-item">
+                            <div class="keyword-info">
+                                <span class="keyword-rank">#3</span>
+                                <span class="keyword-text">candle gift set</span>
+                            </div>
+                            <div class="keyword-meta">
+                                <span class="keyword-volume">6.2K searches</span>
+                                <span class="keyword-trend up">↑ +15%</span>
+                            </div>
+                        </div>
+                        <div class="keyword-item">
+                            <div class="keyword-info">
+                                <span class="keyword-rank">#4</span>
+                                <span class="keyword-text">cozy home candle</span>
+                            </div>
+                            <div class="keyword-meta">
+                                <span class="keyword-volume">5.8K searches</span>
+                                <span class="keyword-trend stable">→ Stable</span>
+                            </div>
+                        </div>
+                        <div class="keyword-item">
+                            <div class="keyword-info">
+                                <span class="keyword-rank">#5</span>
+                                <span class="keyword-text">aromatherapy candles</span>
+                            </div>
+                            <div class="keyword-meta">
+                                <span class="keyword-volume">4.3K searches</span>
+                                <span class="keyword-trend up">↑ +8%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Niche Keywords -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Related <em>Niches</em></h3>
+                    </div>
+                    <div class="niche-grid">
+                        <span class="niche-tag featured">candle photography</span>
+                        <span class="niche-tag featured">candle packaging ideas</span>
+                        <span class="niche-tag">candle label design</span>
+                        <span class="niche-tag">candle business tips</span>
+                        <span class="niche-tag">luxury candles</span>
+                        <span class="niche-tag">seasonal candles</span>
+                        <span class="niche-tag">candle making tutorial</span>
+                        <span class="niche-tag">wedding candles</span>
+                        <span class="niche-tag">candle holder DIY</span>
+                        <span class="niche-tag">eco-friendly candles</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trending -->
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🔥 <em>Trending</em> Now</h3>
+                    </div>
+                    <div class="trending-list">
+                        <div class="trending-item">
+                            <span class="trending-icon">🕯️</span>
+                            <span class="trending-text">Spring candle scents 2026</span>
+                            <span class="trending-badge">+156%</span>
+                        </div>
+                        <div class="trending-item">
+                            <span class="trending-icon">🏠</span>
+                            <span class="trending-text">Minimalist home fragrance</span>
+                            <span class="trending-badge">+89%</span>
+                        </div>
+                        <div class="trending-item">
+                            <span class="trending-icon">🎁</span>
+                            <span class="trending-text">Mother's day gift candle</span>
+                            <span class="trending-badge">+234%</span>
+                        </div>
+                        <div class="trending-item">
+                            <span class="trending-icon">🌿</span>
+                            <span class="trending-text">Natural wax candles</span>
+                            <span class="trending-badge">+67%</span>
+                        </div>
+                        <div class="trending-item">
+                            <span class="trending-icon">✨</span>
+                            <span class="trending-text">Aesthetic room candle</span>
+                            <span class="trending-badge">+112%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">📅 <em>Seasonal</em> Ideas</h3>
+                    </div>
+                    <div class="trending-list">
+                        <div class="trending-item">
+                            <span class="trending-icon">🌸</span>
+                            <span class="trending-text">Spring refresh</span>
+                        </div>
+                        <div class="trending-item">
+                            <span class="trending-icon">💐</span>
+                            <span class="trending-text">Mother's Day</span>
+                        </div>
+                        <div class="trending-item">
+                            <span class="trending-icon">🎓</span>
+                            <span class="trending-text">Graduation gifts</span>
+                        </div>
+                        <div class="trending-item">
+                            <span class="trending-icon">💒</span>
+                            <span class="trending-text">Wedding season</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="https://github.com/weiweichiang0813-art/pinterest-analytics" target="_blank">GitHub</a>
+        </div>
+        <div class="copyright">© 2026 Winnie Chiang</div>
+    </footer>
+
+    <script>
+        function quickSearch(keyword) {
+            document.getElementById('searchInput').value = keyword;
+            searchKeywords();
+        }
+
+        function searchKeywords() {
+            const keyword = document.getElementById('searchInput').value.trim();
+            if (!keyword) return;
+
+            // Generate related keywords
+            const suffixes = ['aesthetic', 'DIY', 'ideas', 'inspiration', 'tutorial', 'gift', 'homemade', 'luxury'];
+            const results = document.getElementById('keywordResults');
+            
+            let html = '';
+            suffixes.forEach((suffix, i) => {
+                const volume = Math.floor(Math.random() * 15000) + 1000;
+                const change = Math.floor(Math.random() * 50) - 10;
+                const trend = change > 20 ? 'hot' : change > 0 ? 'up' : 'stable';
+                const trendText = change > 20 ? '🔥 Hot' : change > 0 ? `↑ +${change}%` : '→ Stable';
+                
+                html += `
+                    <div class="keyword-item" onclick="copyKeyword('${keyword} ${suffix}')">
+                        <div class="keyword-info">
+                            <span class="keyword-rank">#${i + 1}</span>
+                            <span class="keyword-text">${keyword} ${suffix}</span>
+                        </div>
+                        <div class="keyword-meta">
+                            <span class="keyword-volume">${(volume / 1000).toFixed(1)}K searches</span>
+                            <span class="keyword-trend ${trend}">${trendText}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            results.innerHTML = html;
+        }
+
+        function copyKeyword(keyword) {
+            navigator.clipboard.writeText(keyword);
+            alert(`Copied: "${keyword}"`);
+        }
+
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') searchKeywords();
+        });
+    </script>
+</body>
+</html>
