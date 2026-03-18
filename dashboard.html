@@ -18,13 +18,14 @@
             --accent: #0EA5E9;
             --accent-secondary: #06B6D4;
             --accent-dim: rgba(14, 165, 233, 0.1);
-            --accent-gradient: linear-gradient(135deg, #0EA5E9, #06B6D4);
             --border: #E2E8F0;
             --border-light: #F1F5F9;
             --shadow: rgba(14, 165, 233, 0.08);
             --shadow-lg: rgba(14, 165, 233, 0.15);
             --pin-red: #BD081C;
             --pin-red-dim: rgba(189, 8, 28, 0.08);
+            --success: #10B981;
+            --warning: #F59E0B;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -79,6 +80,36 @@
             font-style: italic;
             color: var(--pin-red);
         }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            padding: 0.4rem 0.8rem;
+            background: var(--bg);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+        .status-dot.error { background: var(--pin-red); animation: none; }
+        .status-dot.loading { background: var(--warning); }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
         .back-link {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.7rem;
@@ -101,6 +132,49 @@
             max-width: 1400px;
             margin: 0 auto;
             padding: 2.5rem 2rem;
+        }
+
+        /* Account Info */
+        .account-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1.25rem;
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+        .account-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid var(--pin-red);
+            object-fit: cover;
+        }
+        .account-details h3 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.3rem;
+            color: var(--text);
+        }
+        .account-details p {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .account-badges {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 12px;
+            background: var(--pin-red-dim);
+            color: var(--pin-red);
+            text-transform: uppercase;
         }
 
         /* Section Label */
@@ -149,10 +223,25 @@
             border: 1px solid var(--border);
             transition: 0.3s ease;
             box-shadow: 0 4px 12px var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--pin-red);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+        .stat-card:hover::before {
+            transform: scaleX(1);
         }
         .stat-card:hover {
             transform: translateY(-5px);
-            border-color: var(--pin-red);
             box-shadow: 0 12px 30px var(--pin-red-dim);
         }
         .stat-label {
@@ -170,6 +259,16 @@
             color: var(--pin-red);
             line-height: 1;
         }
+        .stat-change {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .stat-change.up { color: var(--success); }
+        .stat-change.down { color: var(--pin-red); }
 
         /* Cards */
         .card {
@@ -197,6 +296,87 @@
         .card-title em {
             font-style: italic;
             color: var(--pin-red);
+        }
+
+        /* Keyword Search */
+        .keyword-search {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .search-input {
+            flex: 1;
+            padding: 0.9rem 1.2rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text);
+            background: var(--bg);
+            transition: 0.3s;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--pin-red);
+            box-shadow: 0 0 0 3px var(--pin-red-dim);
+        }
+        .search-input::placeholder {
+            color: var(--text-subtle);
+        }
+        .search-btn {
+            padding: 0.9rem 1.8rem;
+            background: var(--pin-red);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .search-btn:hover {
+            background: #a00719;
+            transform: translateY(-2px);
+        }
+        .search-btn:disabled {
+            background: var(--text-subtle);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Keywords Grid */
+        .keywords-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+        .keyword-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .keyword-tag:hover {
+            border-color: var(--pin-red);
+            color: var(--pin-red);
+            background: var(--pin-red-dim);
+        }
+        .keyword-tag.trending {
+            background: var(--pin-red-dim);
+            border-color: var(--pin-red);
+            color: var(--pin-red);
+        }
+        .keyword-tag.trending::before {
+            content: '🔥 ';
         }
 
         /* Select */
@@ -229,6 +409,13 @@
             gap: 1.5rem;
         }
 
+        /* Three Column Grid */
+        .three-col-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
         /* Tables */
         table {
             width: 100%;
@@ -257,6 +444,76 @@
         .pin-title {
             font-weight: 600;
             color: var(--text);
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid var(--border);
+            border-top-color: var(--pin-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 1rem;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+        .empty-state p {
+            font-size: 0.9rem;
+        }
+
+        /* Pins Grid */
+        .pins-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .pin-card {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            transition: 0.3s;
+        }
+        .pin-card:hover {
+            border-color: var(--pin-red);
+            transform: translateY(-3px);
+        }
+        .pin-card-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .pin-card-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-subtle);
         }
 
         /* Footer */
@@ -294,14 +551,18 @@
         @media (max-width: 1024px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             .two-col-grid { grid-template-columns: 1fr; }
+            .three-col-grid { grid-template-columns: 1fr; }
         }
         @media (max-width: 768px) {
             .dashboard { padding: 1.5rem; }
             .header-content { flex-direction: column; gap: 1rem; }
+            .header-right { width: 100%; justify-content: space-between; }
             .stats-grid { grid-template-columns: 1fr; }
             .stat-value { font-size: 2rem; }
             .card { padding: 1.25rem; }
             .chart-container { height: 250px; }
+            .keyword-search { flex-direction: column; }
+            .account-info { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
@@ -317,33 +578,55 @@
                 <div class="logo-icon"><img src="logo.png" alt="logo"></div>
                 <div class="logo-text">PinTrend Analytics</div>
             </div>
-            <a href="index.html" class="back-link">← Back to Home</a>
+            <div class="header-right">
+                <div class="api-status">
+                    <div class="status-dot" id="apiStatusDot"></div>
+                    <span id="apiStatusText">Connecting...</span>
+                </div>
+                <a href="index.html" class="back-link">← Back to Home</a>
+            </div>
         </div>
     </header>
 
     <main class="dashboard">
-        <div class="section-label">Performance Overview</div>
-        <h1 class="section-title">Your <em>Pinterest</em> Metrics</h1>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <p class="stat-label">Total Impressions</p>
-                <div class="stat-value" id="imp">0</div>
-            </div>
-            <div class="stat-card">
-                <p class="stat-label">Total Clicks</p>
-                <div class="stat-value" id="clk">0</div>
-            </div>
-            <div class="stat-card">
-                <p class="stat-label">Total Saves</p>
-                <div class="stat-value" id="sav">0</div>
-            </div>
-            <div class="stat-card">
-                <p class="stat-label">Engagement Rate</p>
-                <div class="stat-value" id="eng">0%</div>
+        <!-- Account Info -->
+        <div class="account-info" id="accountInfo" style="display: none;">
+            <img class="account-avatar" id="accountAvatar" src="" alt="Profile">
+            <div class="account-details">
+                <h3 id="accountName">Loading...</h3>
+                <p id="accountUsername">@username</p>
+                <div class="account-badges">
+                    <span class="badge" id="accountType">Business</span>
+                    <span class="badge" id="accountPins">0 Pins</span>
+                    <span class="badge" id="accountBoards">0 Boards</span>
+                </div>
             </div>
         </div>
 
+        <div class="section-label">Performance Overview</div>
+        <h1 class="section-title">Your <em>Pinterest</em> Metrics</h1>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <p class="stat-label">Total Impressions</p>
+                <div class="stat-value" id="imp">--</div>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Total Clicks</p>
+                <div class="stat-value" id="clk">--</div>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Total Saves</p>
+                <div class="stat-value" id="sav">--</div>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Engagement Rate</p>
+                <div class="stat-value" id="eng">--%</div>
+            </div>
+        </div>
+
+        <!-- Performance Chart -->
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Performance <em>Trend</em></h3>
@@ -358,35 +641,75 @@
             </div>
         </div>
 
+        <!-- Keyword Research -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Keyword <em>Research</em></h3>
+            </div>
+            <div class="keyword-search">
+                <input type="text" class="search-input" id="keywordInput" placeholder="Search for keywords (e.g., candle, home decor)...">
+                <button class="search-btn" id="searchBtn" onclick="searchKeywords()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    Search
+                </button>
+            </div>
+            <div class="keywords-grid" id="keywordsGrid">
+                <span class="keyword-tag trending">candle</span>
+                <span class="keyword-tag trending">home decor</span>
+                <span class="keyword-tag">soy candle</span>
+                <span class="keyword-tag">aromatherapy</span>
+                <span class="keyword-tag">handmade</span>
+                <span class="keyword-tag">gift ideas</span>
+                <span class="keyword-tag">minimalist</span>
+                <span class="keyword-tag">cozy home</span>
+            </div>
+        </div>
+
+        <!-- Tables Grid -->
         <div class="two-col-grid">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Top <em>Performing</em> Pins</h3>
                 </div>
-                <table id="topTable">
-                    <thead>
-                        <tr>
-                            <th>Pin Title</th>
-                            <th>Impressions</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                <div id="topPinsContainer">
+                    <table id="topTable">
+                        <thead>
+                            <tr>
+                                <th>Pin Title</th>
+                                <th>Impressions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Recent <em>Activity</em></h3>
                 </div>
-                <table id="recentTable">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Pin Title</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                <div id="recentContainer">
+                    <table id="recentTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Pin Title</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
+        </div>
+
+        <!-- API Pins -->
+        <div class="card" id="apiPinsCard" style="display: none;">
+            <div class="card-header">
+                <h3 class="card-title">Your <em>Pins</em> (Live API)</h3>
+            </div>
+            <div class="pins-grid" id="apiPinsGrid"></div>
         </div>
     </main>
 
@@ -397,15 +720,106 @@
             <a href="https://weiweichiang0813-art.github.io/portfolio/" target="_blank">Portfolio</a>
             <a href="https://github.com/weiweichiang0813-art/pinterest-analytics" target="_blank">GitHub</a>
         </div>
-        <div class="copyright">Built by <strong>Winnie Chiang</strong> • © 2026</div>
+        <div class="copyright">Built by <strong>Winnie Chiang</strong> • © 2026 • Powered by Pinterest API</div>
     </footer>
 
     <script>
+        // ============================================================
+        // Configuration
+        // ============================================================
+        const API_BASE = 'https://pinterest-analytics-gamma.vercel.app';
+        const API_KEY = 'pintrend_2024_secret_xyz123'; // Your API Secret Key
         const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1A3RLxLbjffrOy7CSqQKJ3nLP-JkuTLp8z6a2GhXAlmg/gviz/tq?tqx=out:json';
+        
         let chart;
         let globalData = [];
+        let apiData = {};
 
+        // ============================================================
+        // Initialize
+        // ============================================================
         async function init() {
+            updateApiStatus('loading', 'Connecting...');
+            
+            // Load data from both sources
+            await Promise.all([
+                loadGoogleSheetsData(),
+                loadPinterestApiData()
+            ]);
+        }
+
+        // ============================================================
+        // Pinterest API Functions
+        // ============================================================
+        async function loadPinterestApiData() {
+            try {
+                // Get user account info
+                const userResponse = await fetch(`${API_BASE}/api/user?api_key=${API_KEY}`);
+                const userData = await userResponse.json();
+                
+                if (userData.success) {
+                    apiData.user = userData.data;
+                    displayAccountInfo(userData.data);
+                    updateApiStatus('success', 'API Connected');
+                } else {
+                    throw new Error(userData.error || 'Failed to load user data');
+                }
+
+                // Get pins
+                const pinsResponse = await fetch(`${API_BASE}/api/pins?api_key=${API_KEY}`);
+                const pinsData = await pinsResponse.json();
+                
+                if (pinsData.success) {
+                    apiData.pins = pinsData.data;
+                    displayApiPins(pinsData.data);
+                }
+
+            } catch (error) {
+                console.error('API Error:', error);
+                updateApiStatus('error', 'API Error');
+            }
+        }
+
+        function displayAccountInfo(user) {
+            const accountInfo = document.getElementById('accountInfo');
+            accountInfo.style.display = 'flex';
+            
+            document.getElementById('accountAvatar').src = user.profile_image || 'logo.png';
+            document.getElementById('accountName').textContent = user.business_name || user.username;
+            document.getElementById('accountUsername').textContent = '@' + user.username;
+            document.getElementById('accountType').textContent = user.account_type || 'Business';
+            document.getElementById('accountPins').textContent = (user.pin_count || 0) + ' Pins';
+            document.getElementById('accountBoards').textContent = (user.board_count || 0) + ' Boards';
+        }
+
+        function displayApiPins(pinsData) {
+            const items = pinsData.items || [];
+            if (items.length === 0) return;
+
+            const apiPinsCard = document.getElementById('apiPinsCard');
+            apiPinsCard.style.display = 'block';
+
+            const grid = document.getElementById('apiPinsGrid');
+            grid.innerHTML = items.slice(0, 12).map(pin => `
+                <div class="pin-card">
+                    <div class="pin-card-title">${pin.title || 'Untitled Pin'}</div>
+                    <div class="pin-card-meta">ID: ${pin.id}</div>
+                </div>
+            `).join('');
+        }
+
+        function updateApiStatus(status, text) {
+            const dot = document.getElementById('apiStatusDot');
+            const statusText = document.getElementById('apiStatusText');
+            
+            dot.className = 'status-dot ' + status;
+            statusText.textContent = text;
+        }
+
+        // ============================================================
+        // Google Sheets Functions
+        // ============================================================
+        async function loadGoogleSheetsData() {
             try {
                 const res = await fetch(SHEET_URL);
                 const text = await res.text();
@@ -420,7 +834,9 @@
                 renderStats(globalData);
                 renderTables(filtered);
                 updateChart();
-            } catch (e) { console.error("Data Load Error:", e); }
+            } catch (e) { 
+                console.error("Google Sheets Error:", e); 
+            }
         }
 
         function renderStats(data) {
@@ -439,12 +855,12 @@
         function renderTables(rows) {
             const sorted = [...rows].sort((a,b) => (b.c[1]?.v || 0) - (a.c[1]?.v || 0)).slice(0, 5);
             document.querySelector('#topTable tbody').innerHTML = sorted.map(r => `
-                <tr><td class="pin-title">${r.c[6].v}</td><td>${(r.c[1].v).toLocaleString()}</td></tr>
+                <tr><td class="pin-title">${r.c[6]?.v || 'Untitled'}</td><td>${(r.c[1]?.v || 0).toLocaleString()}</td></tr>
             `).join('');
 
             const recent = [...rows].slice(-5).reverse();
             document.querySelector('#recentTable tbody').innerHTML = recent.map(r => `
-                <tr><td>${r.c[0].v}</td><td class="pin-title">${r.c[6].v}</td></tr>
+                <tr><td>${r.c[0]?.v || '-'}</td><td class="pin-title">${r.c[6]?.v || 'Untitled'}</td></tr>
             `).join('');
         }
 
@@ -453,7 +869,8 @@
             const dateMap = {};
             
             globalData.forEach(r => {
-                const date = r.c[0].v;
+                const date = r.c[0]?.v;
+                if (!date) return;
                 const val = r.c[col]?.v || 0;
                 dateMap[date] = (dateMap[date] || 0) + val;
             });
@@ -501,6 +918,68 @@
             });
         }
 
+        // ============================================================
+        // Keyword Search
+        // ============================================================
+        function searchKeywords() {
+            const input = document.getElementById('keywordInput');
+            const keyword = input.value.trim();
+            
+            if (!keyword) return;
+
+            const btn = document.getElementById('searchBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;margin:0;"></div> Searching...';
+
+            // Simulate keyword suggestions (in real app, call Pinterest Trends API)
+            setTimeout(() => {
+                const suggestions = generateKeywordSuggestions(keyword);
+                displayKeywords(suggestions);
+                
+                btn.disabled = false;
+                btn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    Search
+                `;
+            }, 1000);
+        }
+
+        function generateKeywordSuggestions(seed) {
+            const suffixes = ['ideas', 'DIY', 'aesthetic', 'inspiration', 'decor', 'gift', 'handmade', 'tutorial'];
+            const suggestions = [
+                { keyword: seed, trending: true },
+            ];
+            
+            suffixes.forEach(suffix => {
+                suggestions.push({ keyword: `${seed} ${suffix}`, trending: Math.random() > 0.7 });
+            });
+
+            return suggestions;
+        }
+
+        function displayKeywords(keywords) {
+            const grid = document.getElementById('keywordsGrid');
+            grid.innerHTML = keywords.map(k => `
+                <span class="keyword-tag ${k.trending ? 'trending' : ''}" onclick="copyKeyword('${k.keyword}')">${k.keyword}</span>
+            `).join('');
+        }
+
+        function copyKeyword(keyword) {
+            navigator.clipboard.writeText(keyword);
+            alert(`Copied: "${keyword}"`);
+        }
+
+        // Enter key to search
+        document.getElementById('keywordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') searchKeywords();
+        });
+
+        // ============================================================
+        // Initialize on load
+        // ============================================================
         init();
     </script>
 </body>
