@@ -1,88 +1,217 @@
-# PinTrend Analytics - Open Platform by wwclab.
+# 📌 PinTrend Analytics Pro
 
-PinTrend Analytics is a professional analytics platform designed for Pinterest creators. It combines automated web scraping, cloud storage via Google Sheets, and an intuitive dashboard to transform data into growth insights.
+<div align="center">
+
+![PinTrend Analytics](https://img.shields.io/badge/PinTrend-Analytics%20Pro-BD081C?style=for-the-badge&logo=pinterest&logoColor=white)
+![Powered by](https://img.shields.io/badge/Powered%20by-Google%20Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white)
+![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+
+**A professional Pinterest analytics platform with AI-powered insights**
+
+[Live Demo](https://pinterest-analytics-gamma.vercel.app) • [Portfolio](https://weiweichiang0813-art.github.io/portfolio/)
+
+</div>
 
 ---
 
-## 📂 Project Structure
+## ✨ Features
 
-- **index.html**: Landing Page (wwclab. branded product entry)
-- **dashboard.html**: Analytics Dashboard (Trend visualization)
-- **privacy.html**: Privacy Policy (Compliant with Pinterest API standards)
-- **logo.png**: wwclab. Circular Brand Logo
-- **scraper/**: Automated scraper and Python dependencies
+| Feature | Description |
+|---------|-------------|
+| 📊 **Performance Dashboard** | Real-time analytics with impressions, clicks, saves, and engagement rates |
+| 🤖 **AI-Powered Insights** | Smart performance analysis powered by Google Gemini AI |
+| ✍️ **Content Creator** | AI-generated Pinterest Pin titles, descriptions, and hashtags |
+| 👥 **Audience Analytics** | Demographics, interests, and best posting times |
+| 🔍 **Keyword Research** | Trending keywords and SEO optimization suggestions |
+| 🔄 **Automated Data Sync** | Daily scraping with GitHub Actions + Google Sheets storage |
 
 ---
 
-## 🚀 Quick Start Guide
+## 🖥️ Pages Overview
 
-## 1. Local Setup
+```
+├── index.html          # Home - Performance Summary
+├── analytics.html      # Detailed Analytics + AI Insights
+├── audience.html       # Audience Demographics & Interests
+├── keywords.html       # Keyword Research & Trends
+├── creator.html        # AI Content Generator
+├── privacy.html        # Privacy Policy
+└── api/
+    ├── gemini.py       # Google Gemini AI Integration
+    ├── user.py         # Pinterest User API
+    ├── pins.py         # Pinterest Pins API
+    ├── boards.py       # Pinterest Boards API
+    └── analytics.py    # Pinterest Analytics API
+```
+
+---
+
+## 🚀 Tech Stack
+
+| Category | Technologies |
+|----------|--------------|
+| **Frontend** | HTML5, CSS3, JavaScript, Chart.js |
+| **Backend** | Python, Vercel Serverless Functions |
+| **AI** | Google Gemini 1.5 Flash |
+| **APIs** | Pinterest API, Google Sheets API |
+| **Deployment** | Vercel, GitHub Pages |
+| **Automation** | GitHub Actions (Daily Scraper) |
+| **Design** | Instrument Serif, Manrope, JetBrains Mono |
+
+---
+
+## 📦 Installation
+
+### Prerequisites
+
+- Python 3.9+
+- Pinterest Developer Account
+- Google Cloud Console Account (for Gemini API)
+- Vercel Account
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/weiweichiang0813-art/pinterest-analytics.git
+cd pinterest-analytics
+```
+
+### 2. Install Dependencies
 
 ```bash
 cd scraper
 pip install -r requirements.txt
 playwright install chromium
-Note: Place your credentials.json inside the scraper/ folder.
 ```
 
-## 2. GitHub Secrets Configuration
+### 3. Configure Environment Variables (Vercel)
 
+Go to **Vercel Dashboard** → **Settings** → **Environment Variables** and add:
 
-- Go to Settings > Secrets and variables > Actions and add:
+| Variable | Description |
+|----------|-------------|
+| `PINTEREST_APP_ID` | Your Pinterest App ID |
+| `PINTEREST_APP_SECRET` | Your Pinterest App Secret |
+| `PINTEREST_ACCESS_TOKEN` | Your Pinterest Access Token |
+| `GEMINI_API_KEY` | Your Google Gemini API Key |
+| `API_SECRET_KEY` | Custom secret key for API authentication |
 
-- GOOGLE_CREDENTIALS: Full content of credentials.json
+### 4. Configure GitHub Secrets (for Scraper)
 
-- PINTEREST_SESSION: Content of pinterest_session.json
+Go to **Settings** → **Secrets and variables** → **Actions** and add:
 
+| Secret | Description |
+|--------|-------------|
+| `GOOGLE_CREDENTIALS` | Full content of `credentials.json` |
+| `PINTEREST_SESSION` | Content of `pinterest_session.json` |
 
-## 3. Automation
+---
 
+## 🔧 API Endpoints
 
-- Schedule: Daily at 9:00 AM EST.
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/user` | GET | Get Pinterest user profile |
+| `/api/pins` | GET | Get user's pins |
+| `/api/boards` | GET | Get user's boards |
+| `/api/analytics` | GET | Get analytics data |
+| `/api/gemini` | POST | AI content generation |
 
-- Manual: Go to Actions tab and click "Run workflow".
+### Authentication
 
+All API endpoints require authentication via header or query parameter:
 
-## 📊 Core Features
+```bash
+# Header
+X-API-Key: your_api_secret_key
 
+# Query Parameter
+?api_key=your_api_secret_key
+```
 
-- wwclab. Visual Identity: Deep-blue professional theme with circular logo.
+---
 
-- Smart Data Cleaning: Automatically removes "Untitled Pin" or "Pinterest" entries.
+## 📊 Data Schema (Google Sheets)
 
-- Performance Trends: Interactive charts for Impressions, Clicks, and Saves.
+| Column | Type | Description |
+|--------|------|-------------|
+| `date` | Date | Sync date (YYYY-MM-DD) |
+| `impressions` | Integer | Total views |
+| `saves` | Integer | Total saves |
+| `pin_clicks` | Integer | Closeup clicks |
+| `outbound_clicks` | Integer | External link clicks |
+| `engagement_rate` | Float | (Clicks + Saves) / Impressions × 100 |
+| `pin_title` | String | Pin title (filtered) |
 
-- OAuth 2.0 Ready: Pre-configured for official Pinterest API integration.
+---
 
+## 🤖 AI Features
 
-## 🛠️ Data Schema (Google Sheets)
+### Content Creator
+Generate optimized Pinterest content with customizable:
+- **Tone**: Friendly, Professional, Playful, Luxurious, Minimalist
+- **Output**: SEO-optimized titles, engaging descriptions, relevant hashtags
 
+### Performance Insights
+AI analyzes your data and provides:
+- What's working well
+- Areas for improvement
+- Content strategy recommendations
+- Trend observations
 
-- date: Sync Date (YYYY-MM-DD)
+---
 
-- impressions: Cumulative views
+## 📅 Automation
 
-- saves: Total times saved
+The scraper runs automatically via GitHub Actions:
 
-- pin_clicks: Total closeup clicks
+- **Schedule**: Daily at 9:00 AM EST
+- **Manual**: Go to Actions tab → "Run workflow"
 
-- outbound_clicks: Clicks to external website (Terradomi)
+---
 
-- engagement_rate: (Clicks + Saves) / Impressions * 100
+## 🎨 Design System
 
-- pin_title: Validated title (Filtered for accuracy)
+| Element | Value |
+|---------|-------|
+| **Primary Color** | Pinterest Red `#BD081C` |
+| **Background** | Light Gray `#F8FAFC` |
+| **Text** | Navy `#1E3A5F` |
+| **Fonts** | Instrument Serif (Display), Manrope (Body), JetBrains Mono (Code) |
 
+---
 
-## 👨‍💻 Developer Information
+## 👨‍💻 Developer
 
-Built by: Wei Wei Chiang
+<div align="center">
 
-Brand: wwclab.
+**Wei Wei Chiang**
 
-GitHub: weiweichiang0813-art
+[![GitHub](https://img.shields.io/badge/GitHub-weiweichiang0813--art-181717?style=flat-square&logo=github)](https://github.com/weiweichiang0813-art)
+[![Portfolio](https://img.shields.io/badge/Portfolio-View%20My%20Work-BD081C?style=flat-square)](https://weiweichiang0813-art.github.io/portfolio/)
 
-Portfolio: View My Work
+**Brand**: wwclab.
 
+</div>
 
-## 📝 Site Display
-https://weiweichiang0813-art.github.io/pinterest-analytics/
+---
+
+## 📝 License
+
+This project is for personal and educational use.
+
+---
+
+## 🔗 Links
+
+- **Live Site**: [pinterest-analytics-gamma.vercel.app](https://pinterest-analytics-gamma.vercel.app)
+- **GitHub Pages**: [weiweichiang0813-art.github.io/pinterest-analytics](https://weiweichiang0813-art.github.io/pinterest-analytics/)
+- **Portfolio**: [weiweichiang0813-art.github.io/portfolio](https://weiweichiang0813-art.github.io/portfolio/)
+
+---
+
+<div align="center">
+
+Made with ❤️ by Wei Wei Chiang • Powered by Pinterest API & Google Gemini AI
+
+</div>
