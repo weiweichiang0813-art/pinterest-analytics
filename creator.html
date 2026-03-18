@@ -77,12 +77,7 @@
         .page-title em { font-style: italic; color: var(--success); }
         .page-subtitle { color: var(--text-muted); margin-top: 0.5rem; }
 
-        /* Creator Layout */
-        .creator-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
+        .creator-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
 
         .card {
             background: var(--bg-card);
@@ -111,7 +106,6 @@
             font-size: 1.2rem;
         }
 
-        /* Form */
         .form-group { margin-bottom: 1.5rem; }
         .form-label {
             font-family: 'JetBrains Mono', monospace;
@@ -137,19 +131,9 @@
             box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         }
         .form-textarea { min-height: 120px; resize: vertical; }
+        .form-hint { font-size: 0.75rem; color: var(--text-subtle); margin-top: 0.5rem; }
 
-        .form-hint {
-            font-size: 0.75rem;
-            color: var(--text-subtle);
-            margin-top: 0.5rem;
-        }
-
-        /* Tone Selector */
-        .tone-options {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-        }
+        .tone-options { display: flex; gap: 0.75rem; flex-wrap: wrap; }
         .tone-option {
             padding: 0.6rem 1.2rem;
             border: 1px solid var(--border);
@@ -163,7 +147,6 @@
         .tone-option:hover { border-color: var(--success); color: var(--success); }
         .tone-option.active { border-color: var(--success); background: rgba(16, 185, 129, 0.1); color: var(--success); }
 
-        /* Generate Button */
         .generate-btn {
             width: 100%;
             padding: 1.2rem;
@@ -182,9 +165,8 @@
             gap: 10px;
         }
         .generate-btn:hover { background: #059669; transform: translateY(-2px); }
-        .generate-btn:disabled { background: var(--text-subtle); cursor: not-allowed; }
+        .generate-btn:disabled { background: var(--text-subtle); cursor: not-allowed; transform: none; }
 
-        /* Output Card */
         .output-card {
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(14, 165, 233, 0.05));
             border-color: var(--success);
@@ -208,6 +190,7 @@
             line-height: 1.7;
             color: var(--text);
             position: relative;
+            min-height: 50px;
         }
         .output-content.title {
             font-family: 'Instrument Serif', serif;
@@ -230,12 +213,7 @@
         }
         .copy-btn:hover { border-color: var(--success); color: var(--success); }
 
-        /* Hashtags */
-        .hashtags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
+        .hashtags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
         .hashtag {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.75rem;
@@ -244,10 +222,10 @@
             border-radius: 15px;
             color: var(--success);
             cursor: pointer;
+            transition: 0.2s;
         }
         .hashtag:hover { background: rgba(16, 185, 129, 0.2); }
 
-        /* AI Badge */
         .ai-badge {
             display: inline-flex;
             align-items: center;
@@ -261,7 +239,6 @@
             margin-bottom: 1rem;
         }
 
-        /* Placeholder */
         .ai-placeholder {
             text-align: center;
             padding: 3rem 2rem;
@@ -274,7 +251,37 @@
             color: var(--text);
             margin-bottom: 0.5rem;
         }
-        .ai-placeholder p { max-width: 400px; margin: 0 auto; }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 2rem;
+        }
+        .loading-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: bounce 1.4s ease-in-out infinite;
+        }
+        .loading-dot:nth-child(1) { animation-delay: 0s; }
+        .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #EF4444;
+            border-radius: 12px;
+            padding: 1rem;
+            color: #DC2626;
+            text-align: center;
+        }
 
         footer {
             text-align: center;
@@ -293,12 +300,8 @@
         .footer-links a:hover { color: var(--pin-red); }
         .copyright { font-family: 'JetBrains Mono', monospace; color: var(--text-subtle); font-size: 0.7rem; }
 
-        @media (max-width: 1024px) {
-            .creator-layout { grid-template-columns: 1fr; }
-        }
-        @media (max-width: 768px) {
-            .nav-links { display: none; }
-        }
+        @media (max-width: 1024px) { .creator-layout { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .nav-links { display: none; } }
     </style>
 </head>
 <body>
@@ -322,7 +325,7 @@
 
     <main>
         <div class="page-header">
-            <div class="section-label">AI-Powered</div>
+            <div class="section-label">AI-Powered by Gemini</div>
             <h1 class="page-title">Content <em>Creator</em></h1>
             <p class="page-subtitle">Generate optimized Pinterest Pin content with AI assistance</p>
         </div>
@@ -336,7 +339,7 @@
                 </h2>
 
                 <div class="form-group">
-                    <label class="form-label">Product/Concept</label>
+                    <label class="form-label">Product/Concept *</label>
                     <input type="text" class="form-input" id="conceptInput" placeholder="e.g., Lavender soy candle for relaxation">
                     <p class="form-hint">Describe your product or content idea</p>
                 </div>
@@ -344,12 +347,12 @@
                 <div class="form-group">
                     <label class="form-label">Target Keywords</label>
                     <input type="text" class="form-input" id="keywordsInput" placeholder="e.g., soy candle, aromatherapy, self care">
-                    <p class="form-hint">Separate with commas</p>
+                    <p class="form-hint">Separate with commas for better SEO</p>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Additional Details (Optional)</label>
-                    <textarea class="form-textarea" id="detailsInput" placeholder="Add any specific features, benefits, or messaging you want to include..."></textarea>
+                    <textarea class="form-textarea" id="detailsInput" placeholder="Add any specific features, benefits, target audience, or messaging you want to include..."></textarea>
                 </div>
 
                 <div class="form-group">
@@ -364,13 +367,13 @@
                 </div>
 
                 <button class="generate-btn" id="generateBtn" onclick="generateContent()">
-                    ✨ Generate Pin Content
+                    ✨ Generate with AI
                 </button>
             </div>
 
             <!-- Output -->
             <div class="card output-card">
-                <div class="ai-badge">🤖 AI Generated</div>
+                <div class="ai-badge">🤖 Powered by Google Gemini</div>
                 <h2 class="card-title">
                     <span class="card-title-icon">📌</span>
                     Your <em>Pin</em> Content
@@ -378,9 +381,9 @@
 
                 <div id="outputContainer">
                     <div class="ai-placeholder">
-                        <div class="ai-placeholder-icon">🔮</div>
-                        <h3>AI Content Coming Soon</h3>
-                        <p>Connect your Claude API key to generate optimized Pinterest content with AI assistance.</p>
+                        <div class="ai-placeholder-icon">✨</div>
+                        <h3>Ready to Create</h3>
+                        <p>Fill in the form and click "Generate with AI" to create optimized Pinterest content.</p>
                     </div>
                 </div>
             </div>
@@ -393,74 +396,149 @@
             <a href="privacy.html">Privacy Policy</a>
             <a href="https://github.com/weiweichiang0813-art/pinterest-analytics" target="_blank">GitHub</a>
         </div>
-        <div class="copyright">© 2026 Winnie Chiang • Powered by Claude AI</div>
+        <div class="copyright">© 2026 Winnie Chiang • Powered by Google Gemini AI</div>
     </footer>
 
     <script>
+        // Configuration
+        const API_BASE = 'https://pinterest-analytics-gamma.vercel.app';
+        const API_KEY = 'YOUR_API_SECRET_KEY'; // 換成你的 API Key
+
+        let selectedTone = 'Friendly';
+
         function selectTone(el) {
             document.querySelectorAll('.tone-option').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
+            selectedTone = el.textContent;
         }
 
-        function generateContent() {
-            const concept = document.getElementById('conceptInput').value;
-            const keywords = document.getElementById('keywordsInput').value;
+        async function generateContent() {
+            const concept = document.getElementById('conceptInput').value.trim();
+            const keywords = document.getElementById('keywordsInput').value.trim();
+            const details = document.getElementById('detailsInput').value.trim();
             
             if (!concept) {
                 alert('Please enter your product or concept');
                 return;
             }
 
-            // For now, show a template-based output
-            // Will be replaced with AI when API is connected
-            const keywordList = keywords.split(',').map(k => k.trim()).filter(k => k);
-            const hashtags = keywordList.map(k => '#' + k.replace(/\s+/g, '')).join(' ');
+            const btn = document.getElementById('generateBtn');
+            const container = document.getElementById('outputContainer');
+            
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Generating...';
+            
+            container.innerHTML = `
+                <div class="loading">
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                </div>
+                <p style="text-align: center; color: var(--text-muted);">AI is crafting your content...</p>
+            `;
 
-            const output = `
+            try {
+                const prompt = `Create Pinterest Pin content for:
+
+Product/Concept: ${concept}
+${keywords ? `Target Keywords: ${keywords}` : ''}
+${details ? `Additional Details: ${details}` : ''}
+Tone: ${selectedTone}
+
+Generate an engaging, SEO-optimized Pin with:
+1. A catchy title (under 100 characters)
+2. An engaging description with emojis and call-to-action (under 500 characters)
+3. 8-10 relevant hashtags`;
+
+                const response = await fetch(`${API_BASE}/api/gemini`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': API_KEY
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        action: 'generate'
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    displayOutput(result.data, concept, keywords);
+                } else {
+                    throw new Error(result.error || 'Failed to generate content');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = `
+                    <div class="error-message">
+                        <p>❌ ${error.message || 'Something went wrong. Please try again.'}</p>
+                        <p style="font-size: 0.8rem; margin-top: 0.5rem;">Make sure your API is configured correctly.</p>
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '✨ Generate with AI';
+            }
+        }
+
+        function displayOutput(data, concept, keywords) {
+            const container = document.getElementById('outputContainer');
+            
+            let title = data.title || `${concept} | Perfect for Your Home ✨`;
+            let description = data.description || data.raw || '';
+            let hashtags = data.hashtags || [];
+
+            if (typeof hashtags === 'string') {
+                hashtags = hashtags.split(/[\s,]+/).filter(h => h.startsWith('#') || h.length > 0);
+            }
+
+            hashtags = hashtags.map(h => h.startsWith('#') ? h : '#' + h.replace(/\s+/g, ''));
+
+            if (hashtags.length === 0 && keywords) {
+                hashtags = keywords.split(',').map(k => '#' + k.trim().replace(/\s+/g, ''));
+                hashtags.push('#pinterest', '#homedecor', '#aesthetic');
+            }
+
+            container.innerHTML = `
                 <div class="output-section">
                     <div class="output-label">Pin Title</div>
-                    <div class="output-content title">
-                        ${concept} | Perfect for Self Care ✨
-                        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                    <div class="output-content title" id="titleOutput">
+                        ${title}
+                        <button class="copy-btn" onclick="copyText('titleOutput')">Copy</button>
                     </div>
                 </div>
 
                 <div class="output-section">
                     <div class="output-label">Description</div>
-                    <div class="output-content">
-                        🕯️ <strong>Looking for the perfect way to unwind?</strong><br><br>
-                        Discover our ${concept} - handcrafted with love and designed to transform your space into a peaceful sanctuary.<br><br>
-                        ✨ Hand-poured with natural ingredients<br>
-                        🌿 Clean-burning & eco-friendly<br>
-                        💝 Perfect gift for loved ones<br><br>
-                        Tap to shop now and bring cozy vibes to your home! 🏠<br><br>
-                        ${hashtags}
-                        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+                    <div class="output-content" id="descOutput">
+                        ${description.replace(/\n/g, '<br>')}
+                        <button class="copy-btn" onclick="copyText('descOutput')">Copy</button>
                     </div>
                 </div>
 
                 <div class="output-section">
-                    <div class="output-label">Suggested Hashtags</div>
-                    <div class="hashtags">
-                        ${keywordList.map(k => `<span class="hashtag" onclick="copyHashtag(this)">#${k.replace(/\s+/g, '')}</span>`).join('')}
-                        <span class="hashtag" onclick="copyHashtag(this)">#homedecor</span>
-                        <span class="hashtag" onclick="copyHashtag(this)">#cozyvibes</span>
-                        <span class="hashtag" onclick="copyHashtag(this)">#selfcare</span>
-                        <span class="hashtag" onclick="copyHashtag(this)">#giftideas</span>
+                    <div class="output-label">Hashtags</div>
+                    <div class="hashtags" id="hashtagsContainer">
+                        ${hashtags.map(h => `<span class="hashtag" onclick="copyHashtag(this)">${h}</span>`).join('')}
                     </div>
+                    <button class="copy-btn" style="position: relative; margin-top: 0.75rem;" onclick="copyAllHashtags()">Copy All Hashtags</button>
                 </div>
 
                 <p style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-subtle); text-align: center;">
-                    💡 Connect Claude API for more personalized, AI-generated content
+                    ✨ Generated by Google Gemini AI
                 </p>
             `;
-
-            document.getElementById('outputContainer').innerHTML = output;
         }
 
-        function copyText(btn) {
-            const text = btn.parentElement.innerText.replace('Copy', '').trim();
+        function copyText(elementId) {
+            const el = document.getElementById(elementId);
+            const text = el.innerText.replace('Copy', '').trim();
             navigator.clipboard.writeText(text);
+            
+            const btn = el.querySelector('.copy-btn');
             btn.textContent = 'Copied!';
             setTimeout(() => btn.textContent = 'Copy', 2000);
         }
@@ -469,6 +547,12 @@
             navigator.clipboard.writeText(el.textContent);
             el.style.background = 'rgba(16, 185, 129, 0.3)';
             setTimeout(() => el.style.background = '', 500);
+        }
+
+        function copyAllHashtags() {
+            const hashtags = Array.from(document.querySelectorAll('.hashtag')).map(h => h.textContent).join(' ');
+            navigator.clipboard.writeText(hashtags);
+            alert('All hashtags copied!');
         }
     </script>
 </body>

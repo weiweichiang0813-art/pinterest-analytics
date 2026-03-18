@@ -366,10 +366,13 @@
                 <div id="aiInsightsContent" class="ai-content">
                     <div class="ai-placeholder">
                         <div class="ai-placeholder-icon">🔮</div>
-                        <h4>AI Analysis Coming Soon</h4>
-                        <p>Connect Claude API to get personalized insights about your Pinterest performance.</p>
+                        <h4>Loading AI Insights...</h4>
+                        <p>Analyzing your Pinterest performance data...</p>
                     </div>
                 </div>
+                <button onclick="generateAIInsights()" style="margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--pin-red); color: white; border: none; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; cursor: pointer;">
+                    🤖 Generate AI Insights
+                </button>
             </div>
         </div>
 
@@ -414,6 +417,9 @@
 
     <script>
         const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1A3RLxLbjffrOy7CSqQKJ3nLP-JkuTLp8z6a2GhXAlmg/gviz/tq?tqx=out:json';
+        const API_BASE = 'https://pinterest-analytics-gamma.vercel.app';
+        const API_KEY = 'YOUR_API_SECRET_KEY'; // 換成你的 API Key
+        
         let chart, compChart;
         let globalData = [];
 
@@ -535,6 +541,74 @@
         }
 
         init();
+
+        async function generateAIInsights() {
+            const container = document.getElementById('aiInsightsContent');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 1rem;">
+                    <p>🔄 Analyzing your data...</p>
+                </div>
+            `;
+
+            try {
+                // Get stats
+                let totals = { imp: 0, clk: 0, sav: 0 };
+                globalData.forEach(r => {
+                    totals.imp += (r.c[1]?.v || 0);
+                    totals.sav += (r.c[2]?.v || 0);
+                    totals.clk += (r.c[3]?.v || 0);
+                });
+                const engRate = totals.imp > 0 ? ((totals.clk + totals.sav) / totals.imp * 100).toFixed(2) : 0;
+
+                const prompt = `Analyze this Pinterest performance data and provide actionable insights:
+
+Total Impressions: ${totals.imp.toLocaleString()}
+Total Clicks: ${totals.clk.toLocaleString()}
+Total Saves: ${totals.sav.toLocaleString()}
+Engagement Rate: ${engRate}%
+Number of Pins: ${globalData.length}
+
+Provide 3-4 specific, actionable insights about:
+1. What's working well
+2. Areas for improvement
+3. Content strategy recommendations
+4. Best practices to increase engagement
+
+Keep it concise and practical.`;
+
+                const response = await fetch(`${API_BASE}/api/gemini`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': API_KEY
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        action: 'analyze'
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    const analysis = result.data.analysis || result.data.raw || 'Analysis complete';
+                    container.innerHTML = `
+                        <div style="line-height: 1.8; font-size: 0.9rem;">
+                            ${analysis.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}
+                        </div>
+                    `;
+                } else {
+                    throw new Error(result.error || 'Failed to analyze');
+                }
+            } catch (error) {
+                container.innerHTML = `
+                    <div style="color: #DC2626; text-align: center;">
+                        <p>❌ ${error.message}</p>
+                        <p style="font-size: 0.8rem;">Make sure API is configured correctly.</p>
+                    </div>
+                `;
+            }
+        }
     </script>
 </body>
 </html>
