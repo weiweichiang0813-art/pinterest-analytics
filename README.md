@@ -198,7 +198,7 @@ The scraper runs automatically via GitHub Actions:
 
 ## 📝 License
 
-This project is for personal and educational use.
+This project is for personal use.
 
 ---
 
@@ -212,6 +212,6 @@ This project is for personal and educational use.
 
 <div align="center">
 
-Made with ❤️ by Wei Wei Chiang • Powered by Pinterest API & Google Gemini AI
+Made by Wei Wei Chiang • Powered by Pinterest API & Google Gemini AI
 
 </div>
